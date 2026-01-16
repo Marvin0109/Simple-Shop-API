@@ -4,12 +4,12 @@ services:
     environment:
       POSTGRES_USER: lordoftherows
       POSTGRES_PASSWORD: rows123
-      POSTGRES_DB: abschlussprojekt
+      POSTGRES_DB: simpleshopapi_db
     ports:
       - "5432:5432"
     volumes:      
-      - ./spring-boot/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/pg_notify.sql
-      - ./spring-boot/src/main/resources/data.sql:/docker-entrypoint-initdb.d/q-data.sql
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/pg_notify.sql
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/q-data.sql
       
     networks:
       - backend_network
