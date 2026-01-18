@@ -1,44 +1,48 @@
 package simpleshopapi.controller;
 
+import org.springframework.http.HttpStatus;
 import simpleshopapi.model.Mitarbeiter;
-import simpleshopapi.repositories.MitarbeiterRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import simpleshopapi.service.MitarbeiterService;
 
 @RestController
 @RequestMapping("/mitarbeiter")
 public class MitarbeiterController {
 
-    private final MitarbeiterRepository repository;
+    private final MitarbeiterService service;
 
-    public MitarbeiterController(MitarbeiterRepository repository) {
-        this.repository = repository;
+    public MitarbeiterController(MitarbeiterService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public ResponseEntity<?> getMitarbeiter(@RequestParam(required = false) Integer id) {
-        if (id != null) {
-            return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<?> getMitarbeiter(
+            @RequestParam(required = false) Integer id) {
+
+        if (id == null) {
+            return ResponseEntity.ok(service.findAll());
         }
+
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Mitarbeiter> createMitarbeiter(@RequestBody Mitarbeiter mitarbeiter) {
-        Mitarbeiter saved = repository.createMitarbeiter(mitarbeiter);
-        return ResponseEntity.ok(saved);
+    public ResponseEntity<Mitarbeiter> createMitarbeiter(
+            @RequestBody Mitarbeiter mitarbeiter) {
+
+        Mitarbeiter saved = service.create(mitarbeiter);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteMitarbeiter(@RequestParam int id) {
-        boolean deleted = repository.deleteById(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deleteMitarbeiter(
+            @RequestParam int id) {
+
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
