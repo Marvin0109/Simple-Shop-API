@@ -1,18 +1,19 @@
 package simpleshopapi.controller;
 
+import org.springframework.http.HttpStatus;
 import simpleshopapi.model.Kunde;
-import simpleshopapi.repositories.KundenRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import simpleshopapi.service.KundenService;
 
 @RestController
 @RequestMapping("/kunden")
 public class KundenController {
 
-    private final KundenRepository repository;
+    private final KundenService service;
 
-    public KundenController(KundenRepository repository) {
-        this.repository = repository;
+    public KundenController(KundenService service) {
+        this.service = service;
     }
 
     @GetMapping
@@ -21,22 +22,20 @@ public class KundenController {
             @RequestParam(required = false) String email) {
 
         if (id != null) {
-            return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-        } else if (email != null) {
-            return repository.findByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.ok(repository.findAll());
+            return ResponseEntity.ok(service.findById(id));
         }
+
+        if (email != null) {
+            return ResponseEntity.ok(service.findByEmail(email));
+        }
+
+        return ResponseEntity.ok(service.findAll());
     }
 
     @PostMapping
     public ResponseEntity<Kunde> createKunden(@RequestBody Kunde kunde) {
-        Kunde saved = repository.createKunde(kunde);
-        return ResponseEntity.ok(saved);
+        Kunde saved = service.create(kunde);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping
@@ -44,16 +43,7 @@ public class KundenController {
             @RequestParam Integer id,
             @RequestBody Kunde kunde) {
 
-        if (!id.equals(kunde.getKundeId())) {
-            return ResponseEntity.badRequest().body("Kunden-ID im Pfad und Body müssen übereinstimmen!");
-        }
-
-        int updated = repository.updateKunde(kunde);
-
-        if (updated == 0) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(kunde);
+        Kunde updated = service.update(id, kunde);
+        return ResponseEntity.ok(updated);
     }
 }

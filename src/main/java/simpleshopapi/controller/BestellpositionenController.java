@@ -1,29 +1,27 @@
 package simpleshopapi.controller;
 
+import org.springframework.http.HttpStatus;
 import simpleshopapi.model.Bestellpositionen;
-import simpleshopapi.repositories.BestellpositionenRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import simpleshopapi.service.BestellpositionenService;
 
 @RestController
 @RequestMapping("/bestellpositionen")
 public class BestellpositionenController {
 
-    private final BestellpositionenRepository repository;
+    private final BestellpositionenService service;
 
-    public BestellpositionenController(BestellpositionenRepository repository) {
-        this.repository = repository;
+    public BestellpositionenController(BestellpositionenService service) {
+        this.service = service;
     }
 
     @GetMapping
     public ResponseEntity<?> getBestellpositionen(@RequestParam(required = false) Integer id) {
-        if (id != null) {
-            return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.ok(repository.findAll());
+        if (id == null) {
+            return ResponseEntity.ok(service.findAll());
         }
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
@@ -31,29 +29,14 @@ public class BestellpositionenController {
             @RequestParam Integer bestellungId,
             @RequestParam String sku,
             @RequestParam Integer menge) {
-        if (bestellungId == null) {
-            return ResponseEntity.badRequest().body("Bestellung-ID ist null!");
-        }
 
-        if (sku == null) {
-            return ResponseEntity.badRequest().body("Sku ist null!");
-        }
-
-        if (menge == null) {
-            return ResponseEntity.badRequest().body("Menge ist null!");
-        }
-
-        Bestellpositionen bp = repository.createBestellposition(menge, sku, bestellungId);
-        return ResponseEntity.ok(bp);
+        Bestellpositionen bp = service.create(bestellungId, sku, menge);
+        return ResponseEntity.status(HttpStatus.CREATED).body(bp);
     }
 
     @DeleteMapping
     public ResponseEntity<Void> deleteBestellpositionen(@RequestParam Integer id) {
-        boolean deleted = repository.deleteById(id);
-        if  (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

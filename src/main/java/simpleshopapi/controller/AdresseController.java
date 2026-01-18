@@ -1,35 +1,33 @@
 package simpleshopapi.controller;
 
+import org.springframework.http.HttpStatus;
 import simpleshopapi.model.Adresse;
-import simpleshopapi.repositories.AdresseRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import simpleshopapi.service.AdresseService;
 
 @RestController
 @RequestMapping("/adressen")
 public class AdresseController {
 
-    private final AdresseRepository repository;
+    private final AdresseService service;
 
-    public AdresseController(AdresseRepository repository) {
-        this.repository = repository;
+    public AdresseController(AdresseService service) {
+        this.service = service;
     }
 
     @GetMapping
     public ResponseEntity<?> getAdresse(@RequestParam(required = false) Integer id) {
-        if (id != null) {
-            return repository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-        } else {
-            return ResponseEntity.ok(repository.findAll());
+        if (id == null) {
+            return ResponseEntity.ok(service.findAll());
         }
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<?> createAdresse(@RequestBody Adresse adresse) {
-        Adresse saved = repository.createAdresse(adresse);
-        return ResponseEntity.ok(saved);
+        Adresse saved = service.create(adresse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping
@@ -37,16 +35,7 @@ public class AdresseController {
             @RequestParam Integer id,
             @RequestBody Adresse adresse) {
 
-        if (!id.equals(adresse.getAdresseId())) {
-            return ResponseEntity.badRequest().body("Adresse-ID im Pfad und Body müssen übereinstimmen!");
-        }
-
-        int updated = repository.updateAdresse(adresse);
-
-        if (updated == 0) {
-            return ResponseEntity.notFound().build();
-        }
-
+        int updated = service.update(id, adresse);
         return ResponseEntity.ok(updated);
     }
 }
