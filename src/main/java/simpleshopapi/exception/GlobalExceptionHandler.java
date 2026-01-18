@@ -32,4 +32,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleBestellungNotFound(BestellungNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
+
+    @ExceptionHandler(AdresseNotFoundException.class)
+    public ResponseEntity<String> handleAdresseNotFound(AdresseNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(BestellpositionNotFoundException.class)
+    public ResponseEntity<String> handleBestellpositionNotFound(BestellpositionNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(KundeNotFoundException.class)
+    public ResponseEntity<String> handleKundeNotFound(KundeNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
 }

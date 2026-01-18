@@ -81,7 +81,7 @@ public class BestellungControllerTest {
                         "datum": "2024-01-19T14:05:00Z",
                         "status": "neu"
                     }
-                    """))
+                """))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.kundeId").value(1))
             .andExpect(jsonPath("$.bestellungId").value(1))

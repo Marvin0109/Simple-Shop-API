@@ -3,13 +3,11 @@ package simpleshopapi.controller;
 import simpleshopapi.model.KundeSummeAnzahlBestellungDTO;
 import simpleshopapi.model.MitarbeiterUebersichtDTO;
 import simpleshopapi.model.ProduktVerkaufszahlenDTO;
-import simpleshopapi.repositories.KundeUebersichtRepository;
 import simpleshopapi.model.MitarbeiterBestellstatusDTO;
-import simpleshopapi.repositories.MitarbeiterUebersichtRepository;
-import simpleshopapi.repositories.ProduktUebersichtRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import simpleshopapi.service.ReportService;
 
 import java.util.List;
 
@@ -17,35 +15,29 @@ import java.util.List;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final KundeUebersichtRepository kundeViewRepo;
-    private final ProduktUebersichtRepository produktViewRepo;
-    private final MitarbeiterUebersichtRepository mitarbeiterViewRepo;
+    private final ReportService service;
 
-    public ReportController(KundeUebersichtRepository kundeViewRepo,
-                            ProduktUebersichtRepository produktViewRepo,
-                            MitarbeiterUebersichtRepository mitarbeiterViewRepo) {
-        this.kundeViewRepo = kundeViewRepo;
-        this.produktViewRepo = produktViewRepo;
-        this.mitarbeiterViewRepo = mitarbeiterViewRepo;
+    public ReportController(ReportService service) {
+        this.service = service;
     }
 
     @GetMapping("/kunde/summe-anzahl-bestellungen")
     public List<KundeSummeAnzahlBestellungDTO> getAllKundeSummeAnzahlBestellung() {
-        return kundeViewRepo.findAll();
+        return service.getKundeSummeAnzahlBestellung();
     }
 
     @GetMapping("/produkt/verkaufszahlen")
     public List<ProduktVerkaufszahlenDTO> getAllProduktVerkaufszahlen() {
-        return produktViewRepo.findAll();
+        return service.getProduktVerkaufszahlen();
     }
 
     @GetMapping("/mitarbeiter/uebersicht")
     public List<MitarbeiterUebersichtDTO> getAllMitarbeiterUebersicht() {
-        return mitarbeiterViewRepo.findAll();
+        return service.getMitarbeiterUebersicht();
     }
 
     @GetMapping("/mitarbeiter/bestellstatus-uebersicht")
     public List<MitarbeiterBestellstatusDTO> getAllMitarbeiterBestellstatus() {
-        return mitarbeiterViewRepo.findAllBestellStatus();
+        return service.getMitarbeiterBestellstatus();
     }
 }
