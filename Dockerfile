@@ -18,7 +18,7 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 
 # JAR vom Build-Image kopieren
-COPY --from=build /target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Spring Boot muss auf 0.0.0.0 hören
 ENV JAVA_OPTS=""
