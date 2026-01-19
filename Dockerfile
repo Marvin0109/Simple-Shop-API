@@ -1,23 +1,30 @@
+# --- Build Stage ---
 FROM eclipse-temurin:17-jdk-alpine AS build
 
 WORKDIR /app
 
 # Maven installieren
-RUN apk add --no-cache maven
+RUN apk add --no-cache maven bash git
 
-COPY pom.xml .
-COPY src ./src
+# Alles kopieren
+COPY . .
 
-# Maven Build
+# Build ohne Tests
 RUN mvn clean package -DskipTests
 
-# --- neues Image für App ---
+# --- Runtime Stage ---
 FROM eclipse-temurin:17-jdk-alpine
+
 WORKDIR /app
 
 # JAR vom Build-Image kopieren
-COPY --from=build /app/target/simpleshopapi-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /target/*.jar app.jar
+
+# Spring Boot muss auf 0.0.0.0 hören
+ENV JAVA_OPTS=""
+ENV SPRING_PROFILES_ACTIVE=prod
+ENV SERVER_PORT=8080
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
 
+ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar app.jar"]
