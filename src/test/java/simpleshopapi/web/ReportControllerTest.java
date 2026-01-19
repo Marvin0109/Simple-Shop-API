@@ -6,10 +6,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.ReportController;
-import simpleshopapi.model.KundeSummeAnzahlBestellungDTO;
-import simpleshopapi.model.MitarbeiterBestellstatusDTO;
-import simpleshopapi.model.MitarbeiterUebersichtDTO;
-import simpleshopapi.model.ProduktVerkaufszahlenDTO;
+import simpleshopapi.dto.KundeSummeAnzahlBestellungDTO;
+import simpleshopapi.dto.MitarbeiterBestellstatusDTO;
+import simpleshopapi.dto.MitarbeiterUebersichtDTO;
+import simpleshopapi.dto.ProduktVerkaufszahlenDTO;
 import simpleshopapi.service.ReportService;
 
 import java.math.BigDecimal;

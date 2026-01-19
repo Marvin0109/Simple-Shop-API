@@ -9,9 +9,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.LoginController;
 import simpleshopapi.exception.UnauthorizedException;
 import simpleshopapi.model.Kunde;
-import simpleshopapi.model.KundeLogin;
+import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.model.Mitarbeiter;
-import simpleshopapi.model.MitarbeiterLogin;
+import simpleshopapi.dto.MitarbeiterLoginDTO;
 import simpleshopapi.service.LoginService;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ public class LoginControllerTest {
         m.setPersonalNr(1);
         m.setVorname("Max");
 
-        when(service.loginMitarbeiter(any(MitarbeiterLogin.class))).thenReturn(m);
+        when(service.loginMitarbeiter(any(MitarbeiterLoginDTO.class))).thenReturn(m);
 
         mvc.perform(post("/login/mitarbeiter")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,7 +52,7 @@ public class LoginControllerTest {
 
     @Test
     void loginMitarbeiter_invalid_returns401() throws Exception {
-        when(service.loginMitarbeiter(any(MitarbeiterLogin.class)))
+        when(service.loginMitarbeiter(any(MitarbeiterLoginDTO.class)))
                 .thenThrow(new UnauthorizedException("Ungültige Login-Daten"));
 
         mvc.perform(post("/login/mitarbeiter")
@@ -72,7 +72,7 @@ public class LoginControllerTest {
         k.setKundeId(1);
         k.setVorname("Anna");
 
-        when(service.loginKunde(any(KundeLogin.class))).thenReturn(k);
+        when(service.loginKunde(any(KundeLoginDTO.class))).thenReturn(k);
 
         mvc.perform(post("/login/kunde")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +89,7 @@ public class LoginControllerTest {
 
     @Test
     void loginKunde_invalid_returns401() throws Exception {
-        when(service.loginKunde(any(KundeLogin.class)))
+        when(service.loginKunde(any(KundeLoginDTO.class)))
             .thenThrow(new UnauthorizedException("Ungültige Login-Daten"));
 
         mvc.perform(post("/login/kunde")

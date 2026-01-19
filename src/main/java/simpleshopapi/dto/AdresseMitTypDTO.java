@@ -1,6 +1,8 @@
-package simpleshopapi.model;
+package simpleshopapi.dto;
 
-public class AdresseMitTyp {
+import simpleshopapi.model.Adresse;
+
+public class AdresseMitTypDTO {
 
     private Adresse adresse;
     private String typ;

@@ -1,6 +1,6 @@
-package simpleshopapi.model;
+package simpleshopapi.dto;
 
-public class MitarbeiterLogin {
+public class MitarbeiterLoginDTO {
 
     private int personalNr;
     private String passwort;

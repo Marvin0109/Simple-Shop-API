@@ -1,10 +1,10 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
-import simpleshopapi.model.KundeSummeAnzahlBestellungDTO;
-import simpleshopapi.model.MitarbeiterBestellstatusDTO;
-import simpleshopapi.model.MitarbeiterUebersichtDTO;
-import simpleshopapi.model.ProduktVerkaufszahlenDTO;
+import simpleshopapi.dto.KundeSummeAnzahlBestellungDTO;
+import simpleshopapi.dto.MitarbeiterBestellstatusDTO;
+import simpleshopapi.dto.MitarbeiterUebersichtDTO;
+import simpleshopapi.dto.ProduktVerkaufszahlenDTO;
 import simpleshopapi.repositories.KundeUebersichtRepository;
 import simpleshopapi.repositories.MitarbeiterUebersichtRepository;
 import simpleshopapi.repositories.ProduktUebersichtRepository;

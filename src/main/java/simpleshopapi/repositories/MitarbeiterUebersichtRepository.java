@@ -1,7 +1,7 @@
 package simpleshopapi.repositories;
 
-import simpleshopapi.model.MitarbeiterBestellstatusDTO;
-import simpleshopapi.model.MitarbeiterUebersichtDTO;
+import simpleshopapi.dto.MitarbeiterBestellstatusDTO;
+import simpleshopapi.dto.MitarbeiterUebersichtDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

@@ -1,9 +1,9 @@
 package simpleshopapi.controller;
 
 import simpleshopapi.model.Kunde;
-import simpleshopapi.model.KundeLogin;
+import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.model.Mitarbeiter;
-import simpleshopapi.model.MitarbeiterLogin;
+import simpleshopapi.dto.MitarbeiterLoginDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,13 +23,13 @@ public class LoginController {
 
     @PostMapping("/mitarbeiter")
     public ResponseEntity<?> loginMitarbeiter(
-            @RequestBody MitarbeiterLogin mitarbeiterLogin) {
+            @RequestBody MitarbeiterLoginDTO mitarbeiterLogin) {
         Mitarbeiter mitarbeiter = service.loginMitarbeiter(mitarbeiterLogin);
         return ResponseEntity.ok(mitarbeiter);
     }
 
     @PostMapping("/kunde")
-    public ResponseEntity<?> loginKunde(@RequestBody KundeLogin kundeLogin) {
+    public ResponseEntity<?> loginKunde(@RequestBody KundeLoginDTO kundeLogin) {
         Kunde kunde = service.loginKunde(kundeLogin);
         return ResponseEntity.ok(kunde);
     }

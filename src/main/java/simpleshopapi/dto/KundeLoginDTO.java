@@ -1,6 +1,6 @@
-package simpleshopapi.model;
+package simpleshopapi.dto;
 
-public class KundeLogin {
+public class KundeLoginDTO {
 
     private String email;
     private String passwort;
