@@ -1,9 +1,9 @@
 package simpleshopapi.controller;
 
-import simpleshopapi.model.KundeSummeAnzahlBestellungDTO;
-import simpleshopapi.model.MitarbeiterUebersichtDTO;
-import simpleshopapi.model.ProduktVerkaufszahlenDTO;
-import simpleshopapi.model.MitarbeiterBestellstatusDTO;
+import simpleshopapi.dto.KundeSummeAnzahlBestellungDTO;
+import simpleshopapi.dto.MitarbeiterUebersichtDTO;
+import simpleshopapi.dto.ProduktVerkaufszahlenDTO;
+import simpleshopapi.dto.MitarbeiterBestellstatusDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

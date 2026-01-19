@@ -1,7 +1,7 @@
 package simpleshopapi.repositories;
 
 import simpleshopapi.model.Bestellung;
-import simpleshopapi.model.PositionenFuerBestellung;
+import simpleshopapi.dto.PositionenFuerBestellungDTO;
 import simpleshopapi.model.Produkt;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -157,7 +157,7 @@ public class BestellungRepository {
         produkt.setLagerbestand(rs.getInt("lagerbestand"));
         produkt.setAngelegtVon(rs.getInt("angelegt_von"));
 
-        PositionenFuerBestellung pos = new PositionenFuerBestellung();
+        PositionenFuerBestellungDTO pos = new PositionenFuerBestellungDTO();
         pos.setPositionsId(rs.getInt("position_id"));
         pos.setBestellungId(rs.getInt("bestellung_id"));
         pos.setMenge(rs.getInt("menge"));

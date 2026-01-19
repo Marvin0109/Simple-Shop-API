@@ -1,9 +1,9 @@
 package simpleshopapi.repositories;
 
 import simpleshopapi.model.Adresse;
-import simpleshopapi.model.AdresseMitTyp;
+import simpleshopapi.dto.AdresseMitTypDTO;
 import simpleshopapi.model.Kunde;
-import simpleshopapi.model.KundeLogin;
+import simpleshopapi.dto.KundeLoginDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -195,7 +195,7 @@ public class KundenRepository {
         );
     }
 
-    public Kunde login(KundeLogin kundeLogin) {
+    public Kunde login(KundeLoginDTO kundeLogin) {
         String sql = "SELECT * FROM kunde WHERE email = ? AND passwort = ?";
 
         List<Kunde> kundenListe = jdbcTemplate.query(
@@ -226,7 +226,7 @@ public class KundenRepository {
         adresse.setOrt(rs.getString("ort"));
         adresse.setLand(rs.getString("land"));
 
-        AdresseMitTyp amt = new AdresseMitTyp();
+        AdresseMitTypDTO amt = new AdresseMitTypDTO();
         amt.setAdresse(adresse);
         amt.setTyp(rs.getString("typ"));
 

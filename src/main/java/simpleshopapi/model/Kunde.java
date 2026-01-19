@@ -1,5 +1,7 @@
 package simpleshopapi.model;
 
+import simpleshopapi.dto.AdresseMitTypDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +12,7 @@ public class Kunde {
     private String vorname;
     private String nachname;
     private String passwort;
-    private List<AdresseMitTyp> adressenMitTyp = new ArrayList<>();
+    private List<AdresseMitTypDTO> adressenMitTyp = new ArrayList<>();
 
     public Integer getKundeId() {
         return kundeId;
@@ -52,11 +54,11 @@ public class Kunde {
         this.passwort = passwort;
     }
 
-    public List<AdresseMitTyp> getAdressen() {
+    public List<AdresseMitTypDTO> getAdressen() {
         return adressenMitTyp;
     }
 
-    public void setAdresse(List<AdresseMitTyp> adressen) {
+    public void setAdresse(List<AdresseMitTypDTO> adressen) {
         this.adressenMitTyp = adressen;
     }
 }

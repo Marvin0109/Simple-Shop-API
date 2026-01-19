@@ -1,4 +1,4 @@
-package simpleshopapi.model;
+package simpleshopapi.dto;
 
 public record MitarbeiterBestellstatusDTO(
         Integer personalNr,

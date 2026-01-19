@@ -1,5 +1,7 @@
 package simpleshopapi.model;
 
+import simpleshopapi.dto.PositionenFuerBestellungDTO;
+
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,7 @@ public class Bestellung {
     private int personalNr;
     private OffsetDateTime datum;
     private String status;
-    private List<PositionenFuerBestellung> positionen = new ArrayList<>();
+    private List<PositionenFuerBestellungDTO> positionen = new ArrayList<>();
 
     public int getBestellungId() {
         return bestellungId;
@@ -53,11 +55,11 @@ public class Bestellung {
         this.status = status;
     }
 
-    public List<PositionenFuerBestellung> getPositionen() {
+    public List<PositionenFuerBestellungDTO> getPositionen() {
         return positionen;
     }
 
-    public void setPositionen(List<PositionenFuerBestellung> positionen) {
+    public void setPositionen(List<PositionenFuerBestellungDTO> positionen) {
         this.positionen = positionen;
     }
 }

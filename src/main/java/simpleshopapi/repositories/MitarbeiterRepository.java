@@ -1,7 +1,7 @@
 package simpleshopapi.repositories;
 
 import simpleshopapi.model.Mitarbeiter;
-import simpleshopapi.model.MitarbeiterLogin;
+import simpleshopapi.dto.MitarbeiterLoginDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -56,7 +56,7 @@ public class MitarbeiterRepository {
         return jdbcTemplate.update(sql, id) > 0;
     }
 
-    public Mitarbeiter login(MitarbeiterLogin mitarbeiterLogin) {
+    public Mitarbeiter login(MitarbeiterLoginDTO mitarbeiterLogin) {
         String sql = "SELECT * FROM mitarbeiter WHERE personal_nr = ? AND passwort = ?";
 
         List<Mitarbeiter> mitarbeiterListe = jdbcTemplate.query(

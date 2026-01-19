@@ -1,8 +1,10 @@
-package simpleshopapi.model;
+package simpleshopapi.dto;
+
+import simpleshopapi.model.Produkt;
 
 import java.math.BigDecimal;
 
-public class PositionenFuerBestellung {
+public class PositionenFuerBestellungDTO {
 
     private int positionsId;
     private int bestellungId;

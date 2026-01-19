@@ -1,6 +1,6 @@
 package simpleshopapi.repositories;
 
-import simpleshopapi.model.ProduktVerkaufszahlenDTO;
+import simpleshopapi.dto.ProduktVerkaufszahlenDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
