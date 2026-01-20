@@ -68,7 +68,7 @@ public class ProduktControllerTest {
     @Test
     void createProdukt_returnsCreated() throws Exception{
         Produkt saved = new Produkt();
-        saved.setSku("SKU-0000");
+        saved.setSku("SKU-1000");
         saved.setName("Test Produkt");
         saved.setPreis(BigDecimal.valueOf(999.99));
         saved.setLagerbestand(1);
@@ -80,7 +80,7 @@ public class ProduktControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                      "sku": "SKU-0000",
+                      "sku": "SKU-1000",
                       "name": "Test Produkt",
                       "preis": 999.99,
                       "lagerbestand": "1",
@@ -88,8 +88,25 @@ public class ProduktControllerTest {
                     }
                 """))
             .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.sku").value("SKU-0000"))
+            .andExpect(jsonPath("$.sku").value("SKU-1000"))
             .andExpect(jsonPath("$.name").value("Test Produkt"));
+    }
+
+    @Test
+    void createProdukt_returnsBadRequest() throws Exception{
+
+        mvc.perform(post("/produkte")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                    {
+                      "sku": "SKU-",
+                      "name": "Test Produkt",
+                      "preis": 999.99,
+                      "lagerbestand": "1",
+                      "angelegtVon": 1
+                    }
+                """))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -102,10 +119,10 @@ public class ProduktControllerTest {
 
     @Test
     void deleteProdukt_notFound_returns404() throws Exception {
-        doThrow(new ProduktNotFoundException("Invalid sku")).when(service).delete("Invalid sku");
+        doThrow(new ProduktNotFoundException("Invalid SKU")).when(service).delete("Invalid SKU");
 
         mvc.perform(delete("/produkte")
-                .param("sku", "Invalid sku"))
+                .param("sku", "Invalid SKU"))
             .andExpect(status().isNotFound());
     }
 

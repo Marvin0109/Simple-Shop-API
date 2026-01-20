@@ -1,10 +1,15 @@
 package simpleshopapi.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import simpleshopapi.model.Kunde;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.KundenService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/kunden")
@@ -33,7 +38,16 @@ public class KundenController {
     }
 
     @PostMapping
-    public ResponseEntity<Kunde> createKunden(@RequestBody Kunde kunde) {
+    public ResponseEntity<?> createKunden(@Valid @RequestBody Kunde kunde,
+                                              BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            bindingResult.getFieldErrors()
+                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
         Kunde saved = service.create(kunde);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

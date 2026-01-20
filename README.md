@@ -6,8 +6,8 @@ als 2-wöchige Abschlussprüfung implementiert werden musste.
 ## Funktionen
 
 - CRUD für Kunden, Mitarbeiter, Adresse, Produkte, Bestellungen und Bestellpositionen
-- Vorhin genannten Entitäten anlegen
-- Login Feature (Passwortmanagement **vereinfach**)
+- Online Shop Logik
+- Login Feature (Passwortmanagement **vereinfacht!**)
 - RESTful API (JSON)
 
 ## Tech Stack
@@ -22,6 +22,7 @@ als 2-wöchige Abschlussprüfung implementiert werden musste.
 - PostgreSQL Client
 - Java 17
 - Maven
+- Unix System
 
 ## Installation und Nutzung (Lokal)
 
@@ -61,11 +62,32 @@ $ ./clean.sh    # stoppt den Container, löscht Container & Volumes (Datenbank z
 - Datenbankcontainer läuft persistent im Hintergrund, bis `clean.sh` ausgeführt wird
 - Volumen: `./db-data`
 
-
 ### Beispiele für API Endpoints:
 - `GET /mitarbeiter` - alle Mitarbeiter abrufen
 - `GET /login/kunde` - Login für Kunden
 - `DELETE /bestellpositionen` - Bestellpositionen löschen
 
-Weitere Endpoints sind dem [Dokument](src/main/resources/docs/DBSW_WISE2526_Abschlussprojekt_Aufgaben.pdf) ab 
-Seite 9 zu entnehmen.
+Für alle weiteren Endpoints zum Testen, gehe zum Abschnitt *Literatur* ganz unten.
+
+## Öffentlich über Railway
+
+### Hinweis
+
+Die Anwendung ist deployable über Railway, da aber im Rahmen des Informatikstudiums als auch
+im Modul DB2 lag der Fokus auf grundlegende Konzepte wie z.B. Funktionsweise von **Schnittstellen (APIs)**, 
+**Basisprinzipien der Webentwicklung**, **Codequalität**, **Best Practices**, **Softwarearchitektur** usw. Also diese Themen wurden behandelt, um eine solide Grundlage für die Arbeit
+an Webanwendungen zu schaffen.
+
+Themen wie **Sicherheit** (HTTPS, sichere Passwortspeicherung, Authentifizierung von Scratch aus statt über z.B. OAuth)
+wurden im Studium nur in einem grundlegenden Rahmen angesprochen und waren in den Projekten und Klausuren nicht der
+zentrale Fokus. Sicherheit war eher ein optionales *Upgrade*.
+
+Da diese Themen in den meisten meiner Projekte und Klausuren keine zentrale Rolle spielten, 
+hatte ich bisher nicht viel Zeit und Gelegenheit, mich tiefgehend mit ihnen auseinanderzusetzen.
+
+### Literatur
+
+Das dieses Projekt ein Abschlussprojekt war, gab es vom Dozenten ein Dokument mit Installationsanweisungen,
+Anforderungen, Endpoints, Datenbankaufbau usw.
+Dieses [Dokument](src/main/resources/docs/DBSW_WISE2526_Abschlussprojekt_Aufgaben.pdf) ist hier verlinkt.
+

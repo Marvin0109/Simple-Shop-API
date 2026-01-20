@@ -33,14 +33,14 @@ public class AdresseControllerTest {
     void getAdresse() throws Exception {
         Adresse a = new Adresse();
         a.setAdresseId(1);
-        a.setStrasse("Musterstraße");
-
+        a.setStrasse("Musterstrasse");
         when(service.findAll()).thenReturn(List.of(a));
 
         mvc.perform(get("/adressen"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].adresseId").value(1))
-            .andExpect(jsonPath("$[0].strasse").value("Musterstraße"));
+            .andExpect(jsonPath("$[0].strasse").value("Musterstrasse"));
     }
 
     @Test
@@ -48,12 +48,12 @@ public class AdresseControllerTest {
         Adresse a = new Adresse();
         a.setAdresseId(1);
         a.setStrasse("Musterstraße");
-
         when(service.findById(1)).thenReturn(a);
 
         mvc.perform(get("/adressen")
                 .param("id", "1"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.adresseId").value(1))
             .andExpect(jsonPath("$.strasse").value("Musterstraße"));
     }
@@ -78,7 +78,12 @@ public class AdresseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                        "strasse": "Neue Straße"
+                        "aktiv": false,
+                        "strasse": "Hauptstraße",
+                        "hausnummer": "1",
+                        "plz": "10115",
+                        "ort": "Berlin",
+                        "land": "Deutschland"
                     }
                 """))
             .andExpect(status().isCreated())

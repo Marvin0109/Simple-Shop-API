@@ -1,10 +1,15 @@
 package simpleshopapi.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import simpleshopapi.model.Bestellung;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.BestellungService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/bestellungen")
@@ -25,7 +30,16 @@ public class BestellungController {
     }
 
     @PostMapping
-    public ResponseEntity<Bestellung> createBestellungen(@RequestBody Bestellung bestellung) {
+    public ResponseEntity<?> createBestellungen(@Valid @RequestBody Bestellung bestellung,
+                                                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            bindingResult.getFieldErrors()
+                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
         Bestellung saved = service.create(bestellung);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }

@@ -15,8 +15,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BestellungController.class)
 public class BestellungControllerTest {
@@ -37,6 +36,7 @@ public class BestellungControllerTest {
 
         mvc.perform(get("/bestellungen"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].bestellungId").value(1))
             .andExpect(jsonPath("$[0].status").value("neu"));
     }
@@ -51,6 +51,7 @@ public class BestellungControllerTest {
 
         mvc.perform(get("/bestellungen").param("id", "2"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.bestellungId").value(2))
             .andExpect(jsonPath("$.status").value("neu"));
     }
@@ -86,6 +87,21 @@ public class BestellungControllerTest {
             .andExpect(jsonPath("$.kundeId").value(1))
             .andExpect(jsonPath("$.bestellungId").value(1))
             .andExpect(jsonPath("$.status").value("neu"));
+    }
+
+    @Test
+    void createBestellungen_returnsBadRequest() throws Exception {
+
+        mvc.perform(post("/bestellungen")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "kundeId": 1,
+                        "personalNr": 1,
+                        "status": "neu"
+                    }
+                """))
+            .andExpect(status().isBadRequest());
     }
 
     @Test

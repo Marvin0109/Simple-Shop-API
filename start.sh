@@ -23,5 +23,5 @@ if [ ! -f "$JAR_FILE" ]; then
 fi
 
 echo "Starte Spring Boot App..."
-java -jar "$JAR_FILE"
+java -jar -Dspring.profiles.active=local "$JAR_FILE"
 

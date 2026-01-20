@@ -42,7 +42,7 @@ public class LoginControllerTest {
                 .content("""
                   {
                       "personalNr": 1,
-                      "passwort": "correct"
+                      "passwort": "123#a"
                   }
                 """))
             .andExpect(status().isOk())
@@ -60,10 +60,24 @@ public class LoginControllerTest {
                 .content("""
                    {
                        "personalNr": 1,
-                       "passwort": "wrong"
+                       "passwort": "1234#aaa"
                    }
                 """))
             .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void loginMitarbeiter_invalid_returnsBadRequest() throws Exception {
+
+        mvc.perform(post("/login/mitarbeiter")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                   {
+                       "personalNr": 1,
+                       "passwort": "password"
+                   }
+                """))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -79,12 +93,26 @@ public class LoginControllerTest {
                 .content("""
                     {
                         "email": "anna@test.de",
-                        "passwort": "correct"
+                        "passwort": "123#a"
                     }
                 """))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.kundeId").value(1))
             .andExpect(jsonPath("$.vorname").value("Anna"));
+    }
+
+    @Test
+    void loginKunde_success_returnsBadRequest() throws Exception {
+
+        mvc.perform(post("/login/kunde")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "email": "anna@test",
+                        "passwort": "123#a"
+                    }
+                """))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -97,7 +125,7 @@ public class LoginControllerTest {
                 .content("""
                     {
                         "email": "wrong@test.de",
-                        "passwort": "wrong"
+                        "passwort": "123#a"
                     }
                 """))
             .andExpect(status().isUnauthorized());
