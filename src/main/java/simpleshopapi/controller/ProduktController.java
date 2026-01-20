@@ -1,10 +1,15 @@
 package simpleshopapi.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import simpleshopapi.model.Produkt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.ProduktService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/produkte")
@@ -28,7 +33,15 @@ public class ProduktController {
     }
 
     @PostMapping
-    public ResponseEntity<Produkt> createProdukt(@RequestBody Produkt produkt) {
+    public ResponseEntity<?> createProdukt(@Valid @RequestBody Produkt produkt,
+                                                 BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            bindingResult.getFieldErrors()
+                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
 
         Produkt saved = service.create(produkt);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);

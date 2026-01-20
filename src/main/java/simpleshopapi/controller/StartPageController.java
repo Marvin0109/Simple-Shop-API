@@ -37,8 +37,16 @@ public class StartPageController {
             <body>
                 <h1>Datenbanken: Weiterführende Konzepte</h1>
                 <p>WISE25/26</p>
+                <h2>Willkommen!</h2>
+                <p>Sollten Sie die Anwendung lokal laufen haben, so verwenden Sie bitte \n
+                <a href="http://localhost:8080/swagger-ui/index.html">Swagger-UI</a>
+                oder laden Sie <a href=""https://www.postman.com/>Postman</a> runter für das Testen \n
+                der Endpointschnittstellen.</p>
+                <p>Greifen Sie die Seite über den Railway-Link zu, dann werden Sie nicht in der Lage sein, \n
+                die Anwendung zu testen, da die Anwendung <strong>kein</strong> HTTPS unterstützen tut!
+                <p>Quellcode: <a href="https://github.com/Marvin0109/Simple-Shop-API">GitHub Repository</a></p>
             </body>
             </html>
-            """;
+           """;
     }
 }

@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MitarbeiterController.class)
-public class MItarbeiterControllerTest {
+public class MitarbeiterControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -29,13 +29,16 @@ public class MItarbeiterControllerTest {
 
     @Test
     void getMitarbeiter() throws Exception {
-        when(service.findAll()).thenReturn(List.of());
+        Mitarbeiter m = new Mitarbeiter();
+        m.setPersonalNr(1);
+        m.setEmail("max@firma.de");
+        when(service.findAll()).thenReturn(List.of(m));
 
         mvc.perform(get("/mitarbeiter"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$.length()").value(0));
+            .andExpect(jsonPath("$.[0].personalNr").value(1))
+            .andExpect(jsonPath("$.[0].email").value("max@firma.de"));
     }
 
     @Test
@@ -60,7 +63,7 @@ public class MItarbeiterControllerTest {
     }
 
     @Test
-    void createMitarbeiter_returnsCreated() throws Exception {
+    void createMitarbeiter_success_returnsCreated() throws Exception {
 
         Mitarbeiter saved = new Mitarbeiter();
         saved.setPersonalNr(1);
@@ -72,15 +75,46 @@ public class MItarbeiterControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                   {
-                    "passwort": "",
-                    "email": "",
+                    "passwort": "123#a",
+                    "email": "max@test.db",
                     "vorname": "Max",
-                    "nachname": ""
+                    "nachname": "Mustermann"
                   }
                 """))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.personalNr").value(1))
             .andExpect(jsonPath("$.vorname").value("Max"));
+    }
+
+    @Test
+    void createMitarbeiter_fail_returnsCreated() throws Exception {
+
+        mvc.perform(post("/mitarbeiter")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                  {
+                    "passwort": "password",
+                    "email": "max@test.db",
+                    "vorname": "Max",
+                    "nachname": "Mustermann"
+                  }
+                """))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createMitarbeiter_fail2_returnsCreated() throws Exception {
+
+        mvc.perform(post("/mitarbeiter")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("""
+                  {
+                    "email": "max.test@.db",
+                    "vorname": "Max",
+                    "nachname": "Mustermann"
+                  }
+                """))
+            .andExpect(status().isBadRequest());
     }
 
     @Test

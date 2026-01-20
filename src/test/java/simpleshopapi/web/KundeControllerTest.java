@@ -18,8 +18,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(KundenController.class)
 public class KundeControllerTest {
@@ -40,6 +39,7 @@ public class KundeControllerTest {
 
         mvc.perform(get("/kunden"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].kundeId").value(1))
             .andExpect(jsonPath("$[0].vorname").value("Max"));
     }
@@ -55,6 +55,7 @@ public class KundeControllerTest {
         mvc.perform(get("/kunden")
                 .param("id", "1"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.kundeId").value(1))
             .andExpect(jsonPath("$.vorname").value("Max"));
     }
@@ -69,6 +70,7 @@ public class KundeControllerTest {
 
         mvc.perform(get("/kunden").param("email", "test@test.de"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.kundeId").value(1))
             .andExpect(jsonPath("$.email").value("test@test.de"));
     }
@@ -94,12 +96,32 @@ public class KundeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                        "vorname": "Peter"
+                        "email": "peter@test.de",
+                        "vorname": "Peter",
+                        "nachname": "Paul",
+                        "passwort": "123#a"
                     }
                 """))
             .andExpect(status().isCreated())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.kundeId").value(1))
             .andExpect(jsonPath("$.vorname").value("Peter"));
+    }
+
+    @Test
+    void createKunden_returnsBadRequest() throws Exception {
+
+        mvc.perform(post("/kunden")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                        "email": "@@@@",
+                        "vorname": "Peter",
+                        "nachname": "Paul",
+                        "passwort": "123#a"
+                    }
+                """))
+            .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -3,6 +3,7 @@ package simpleshopapi.web;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.BestellpositionenController;
@@ -14,8 +15,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BestellpositionenController.class)
 public class BestellpositionenControllerTest {
@@ -36,6 +36,7 @@ public class BestellpositionenControllerTest {
 
         mvc.perform(get("/bestellpositionen"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].positionsId").value(1))
             .andExpect(jsonPath("$[0].menge").value(5));
     }
@@ -50,6 +51,7 @@ public class BestellpositionenControllerTest {
 
         mvc.perform(get("/bestellpositionen").param("id", "1"))
             .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.positionsId").value(1))
             .andExpect(jsonPath("$.menge").value(5));
     }
