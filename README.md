@@ -1,20 +1,24 @@
 # SIMPLE-SHOP-API
 
-SIMPLE-SHOP-API ist eine simple Datenbank REST-API Anwendung, die im Modul *Datenbanken: Weiterführende Konzepte*
-als 2-wöchige Abschlussprüfung implementiert werden musste.
+> **Autor**: Marvin0109
+> **Datum**: 20.01.2026
+> **Version**: 1.3
+
+SIMPLE-SHOP-API ist eine simple REST-API Anwendung, die im Modul *Datenbanken: Weiterführende Konzepte*
+als 2-wöchige Abschlussprüfung implementiert werden musste. Sie verwendet **PostgreSQL** als Datenbank
+und bietet grundlegende Funktionen für ein einfaches Shop-System an.
 
 ## Funktionen
 
 - CRUD für Kunden, Mitarbeiter, Adresse, Produkte, Bestellungen und Bestellpositionen
-- Online Shop Logik
 - Login Feature (Passwortmanagement **vereinfacht!**)
-- RESTful API (JSON)
 
 ## Tech Stack
 
 - **Backend:** Spring Boot
 - **Datenbank:** PostgreSQL
 - **Containerisierung:** Docker + Docker Compose
+- **API:** RESTful API (JSON)
 
 ## Voraussetzungen
 
@@ -22,7 +26,11 @@ als 2-wöchige Abschlussprüfung implementiert werden musste.
 - PostgreSQL Client
 - Java 17
 - Maven
-- Unix System
+- Unix System / Windows (nicht getestet)
+
+## Konfigurationen der Datenbankverbindung (JDBC)
+
+Die Anwendung verwendet **JDBC** zur Verbindung mit einer **PostgreSQL-Datenbank**
 
 ## Installation und Nutzung (Lokal)
 
@@ -69,7 +77,7 @@ $ ./clean.sh    # stoppt den Container, löscht Container & Volumes (Datenbank z
 
 Für alle weiteren Endpoints zum Testen, gehe zum Abschnitt *Literatur* ganz unten.
 
-## Öffentlich über Railway
+## Code Deployment
 
 ### Hinweis
 
@@ -85,7 +93,7 @@ zentrale Fokus. Sicherheit war eher ein optionales *Upgrade*.
 Da diese Themen in den meisten meiner Projekte und Klausuren keine zentrale Rolle spielten, 
 hatte ich bisher nicht viel Zeit und Gelegenheit, mich tiefgehend mit ihnen auseinanderzusetzen.
 
-### Literatur
+## Literatur
 
 Das dieses Projekt ein Abschlussprojekt war, gab es vom Dozenten ein Dokument mit Installationsanweisungen,
 Anforderungen, Endpoints, Datenbankaufbau usw.
