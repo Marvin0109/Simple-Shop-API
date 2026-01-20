@@ -36,7 +36,14 @@ Die Anwendung verwendet **JDBC** zur Verbindung mit einer **PostgreSQL-Datenbank
 
 ### Linux / macOS
 
+#### 0. Repository klonen (SSH)
+
+```
+$ git clone git@github.com:Marvin0109/Simple-Shop-API.git
+```
+
 #### 1. Berechtigungen setzen (falls nötig)
+
 ```
 $ chmod +x start.sh
 $ chmod +x clean.sh
