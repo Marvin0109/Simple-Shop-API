@@ -28,9 +28,11 @@ und bietet grundlegende Funktionen für ein einfaches Shop-System an.
 - Maven
 - Unix System / Windows (nicht getestet)
 
-## Konfigurationen der Datenbankverbindung (JDBC)
+## Konfigurationen der Datenbankverbindung
 
-Die Anwendung verwendet **JDBC** zur Verbindung mit einer **PostgreSQL-Datenbank**
+Die Anwendung verwendet **JDBC** zur Verbindung mit einer **PostgreSQL-Datenbank**.
+Befolgen Sie die Anweisungen in den beiden Dateien `example.env` sowie 
+`src/main/resources/application-local-example.properties`, bevor Sie die Anwendung starten.
 
 ## Installation und Nutzung (Lokal)
 
