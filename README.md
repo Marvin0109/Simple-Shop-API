@@ -1,7 +1,7 @@
 # SIMPLE-SHOP-API
 
 > **Autor**: Marvin0109,
-> **aktualisiert am**: 21.01.2026,
+> **aktualisiert am**: 04.03.2026,
 > **Version**: 1.4
 
 SIMPLE-SHOP-API ist eine simple REST-API Anwendung, die im Modul *Datenbanken: Weiterführende Konzepte*
@@ -96,17 +96,7 @@ Für alle weiteren Endpoints zum Testen, gehe zum Abschnitt *Literatur* ganz unt
 
 ### Hinweis
 
-Die Anwendung ist deployable über Railway, jedoch im Rahmen des Informatikstudiums als auch
-im Modul DB2 lag der Fokus auf grundlegende Konzepte wie z.B. Funktionsweise von **Schnittstellen (APIs)**, 
-**Basisprinzipien der Webentwicklung**, **Codequalität**, **Best Practices**, **Softwarearchitektur** usw. Also diese Themen wurden behandelt, um eine solide Grundlage für die Arbeit
-an Webanwendungen zu schaffen.
-
-Themen wie **Sicherheit** (HTTPS, sichere Passwortspeicherung, Authentifizierung von Scratch aus statt über z.B. OAuth)
-wurden im Studium nur in einem grundlegenden Rahmen angesprochen und waren in den Projekten und Klausuren nicht der
-zentrale Fokus. Sicherheit war eher ein optionales *Upgrade*.
-
-Da diese Themen in den meisten meiner Projekte und Klausuren keine zentrale Rolle spielten, 
-hatte ich bisher nicht viel Zeit und Gelegenheit, mich tiefgehend mit ihnen auseinanderzusetzen.
+Die Anwendung ist deployable über Railway, jedoch ist die Anwendung mit HTTPS noch nicht funktionsfähig.
 
 ## Literatur
 
