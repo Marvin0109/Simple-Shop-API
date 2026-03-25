@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.ProduktController;
-import simpleshopapi.exception.ProduktNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Produkt;
 import simpleshopapi.service.ProduktService;
 
@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProduktController.class)
-public class ProduktControllerTest {
+class ProduktControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -59,7 +59,7 @@ public class ProduktControllerTest {
 
     @Test
     void getProdukt_withSKU_notFound() throws Exception{
-        when(service.findBySku("Invalid sku")).thenThrow(new ProduktNotFoundException("Invalid sku"));
+        when(service.findBySku("Invalid sku")).thenThrow(new NotFoundException("Invalid sku"));
 
         mvc.perform(get("/produkte").param("sku", "Invalid sku"))
             .andExpect(status().isNotFound());
@@ -119,7 +119,7 @@ public class ProduktControllerTest {
 
     @Test
     void deleteProdukt_notFound_returns404() throws Exception {
-        doThrow(new ProduktNotFoundException("Invalid SKU")).when(service).delete("Invalid SKU");
+        doThrow(new NotFoundException("Invalid SKU")).when(service).delete("Invalid SKU");
 
         mvc.perform(delete("/produkte")
                 .param("sku", "Invalid SKU"))
@@ -149,7 +149,7 @@ public class ProduktControllerTest {
 
     @Test
     void updateLagerbestand_notFound_returns404() throws Exception {
-        doThrow(new ProduktNotFoundException("Invalid sku"))
+        doThrow(new NotFoundException("Invalid sku"))
             .when(service).updateLagerbestand("Invalid sku", 5);
 
         mvc.perform(put("/produkte")
