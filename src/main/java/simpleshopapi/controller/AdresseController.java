@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.AdresseService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -46,6 +45,7 @@ public class AdresseController {
 
             return ResponseEntity.badRequest().body(errors);
         }
+
         Adresse saved = service.create(adresse);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
