@@ -1,7 +1,7 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
-import simpleshopapi.exception.ProduktNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Produkt;
 import simpleshopapi.repositories.ProduktRepository;
 
@@ -22,7 +22,7 @@ public class ProduktService {
 
     public Produkt findBySku(String sku) {
         return repository.findBySKU(sku)
-            .orElseThrow(() -> new ProduktNotFoundException(sku));
+            .orElseThrow(() -> new NotFoundException("Produkt with SKU " + sku + " not found!"));
     }
 
     public Produkt create(Produkt produkt) {
@@ -32,7 +32,7 @@ public class ProduktService {
     public void delete(String sku) {
         boolean deleted = repository.deleteBySKU(sku);
         if (!deleted) {
-            throw new ProduktNotFoundException(sku);
+            throw new NotFoundException("Produkt with SKU " + sku + " not found!");
         }
     }
 
@@ -44,7 +44,7 @@ public class ProduktService {
         int updated = repository.updateLagerbestand(sku, lagerbestand);
 
         if (updated == 0) {
-            throw new ProduktNotFoundException(sku);
+            throw new NotFoundException("Produkt with SKU " + sku + " not found!");
         }
 
         return updated;
