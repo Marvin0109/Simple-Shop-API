@@ -8,6 +8,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.AdresseController;
 import simpleshopapi.exception.AdresseNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Adresse;
 import simpleshopapi.service.AdresseService;
 
@@ -21,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AdresseController.class)
-public class AdresseControllerTest {
+class AdresseControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -93,48 +94,25 @@ public class AdresseControllerTest {
 
     @Test
     void updateAdresse_success() throws Exception {
-        when(service.update(eq(1), any(Adresse.class))).thenReturn(1);
-
-        mvc.perform(put("/adressen")
-                        .param("id", "1")
+        mvc.perform(put("/adressen/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                        "adresseId": 1,
                         "strasse": "Updated Straße"
                     }
                 """))
-            .andExpect(status().isOk())
-            .andExpect(content().string("1"));
-    }
-
-    @Test
-    void updateAdresse_idMismatch() throws Exception {
-        doThrow(new IllegalArgumentException("Adresse ID im Pfad und Body müssen übereinstimmen!"))
-            .when(service).update(eq(1), any(Adresse.class));
-
-        mvc.perform(put("/adressen")
-                    .param("id", "1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                        "adresseId": 2,
-                        "strasse": "Updated Straße"
-                    }
-                """))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isNoContent());
     }
 
     @Test
     void updateAdresse_notFound() throws Exception {
-        doThrow(new AdresseNotFoundException(99)).when(service).update(eq(99), any(Adresse.class));
+        doThrow(new NotFoundException("Adresse with id " + 99 + " not found!"))
+                .when(service).update(eq(99), any(Adresse.class));
 
-        mvc.perform(put("/adressen")
-                    .param("id", "99")
+        mvc.perform(put("/adressen/{id}", 99)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                        "adresseId": 99,
                         "strasse": "Updated Straße"
                     }
                 """))

@@ -43,12 +43,12 @@ public class AdresseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
-    @PutMapping
-    public ResponseEntity<?> updateAdresse(
-            @RequestParam Integer id,
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateAdresse(
+            @PathVariable Integer id,
             @RequestBody Adresse adresse) {
 
-        int updated = service.update(id, adresse);
-        return ResponseEntity.ok(updated);
+        service.update(id, adresse);
+        return ResponseEntity.noContent().build();
     }
 }

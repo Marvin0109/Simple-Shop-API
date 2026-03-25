@@ -2,6 +2,7 @@ package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
 import simpleshopapi.exception.AdresseNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Adresse;
 import simpleshopapi.repositories.AdresseRepository;
 
@@ -22,24 +23,18 @@ public class AdresseService {
 
     public Adresse findById(Integer id) {
         return repository.findById(id)
-            .orElseThrow(() -> new AdresseNotFoundException(id));
+            .orElseThrow(() -> new NotFoundException("Adresse with id " + id + " not found!"));
     }
 
     public Adresse create(Adresse adresse) {
         return repository.createAdresse(adresse);
     }
 
-    public int update(Integer id, Adresse adresse) {
-        if (!id.equals(adresse.getAdresseId())) {
-            throw new IllegalArgumentException("Adresse ID im Pfad und Body müssen übereinstimmen!");
-        }
-
+    public void update(Integer id, Adresse adresse) {
         int updated = repository.updateAdresse(adresse);
 
         if (updated == 0) {
-            throw new AdresseNotFoundException(id);
+            throw new NotFoundException("Adresse with id " + id + " not found!");
         }
-
-        return updated;
     }
 }
