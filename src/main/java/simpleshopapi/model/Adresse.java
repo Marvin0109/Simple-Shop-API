@@ -15,13 +15,13 @@ public class Adresse {
     @NotNull(message = "Strasse muss gesetzt werden")
     @NotBlank(message = "Strasse darf nicht leer sein")
     @Size(max = 60, message = "Strasse darf bis 60 Zeichen lang sein")
-    @Pattern(regexp = "^[A-ZÄÖÜ][a-zäöüß]*$", message = "Strasse besteht nur aus Buchstaben des lat. Alphabet inkl." +
+    @Pattern(regexp = "^[A-ZÄÖÜ][a-zäöüß]*$", message = "Strasse besteht nur aus Buchstaben des lat. Alphabet inkl. " +
             "Umlaute, angefangen mit einem Großbuchstaben")
     private String strasse;
 
     @NotNull(message = "Hausnummer muss gesetzt werden")
     @NotBlank(message = "Hausnummer darf nicht leer sein")
-    @Pattern(regexp = "^[0-9]+[a-z]?$", message = "Hausnummer besteht nur aus Zahlen, kann aber mit einem einzelnen" +
+    @Pattern(regexp = "^[0-9]+[a-z]?$", message = "Hausnummer besteht nur aus Zahlen, kann aber mit einem einzelnen " +
             "Kleinbuchstaben abschließen")
     private String hausnummer;
 

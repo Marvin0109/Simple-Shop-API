@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestcontainerConfiguration.class)
 @Sql(scripts = "/schema-test.sql")
-public class KundeContainerTest {
+class KundeContainerTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -47,7 +47,7 @@ public class KundeContainerTest {
         adresse.setOrt("Musterstadt");
         adresse.setLand("Deutschland");
 
-        Adresse savedAdresse = adresseRepository.createAdresse(adresse);
+        Adresse savedAdresse = adresseRepository.save(adresse);
 
         Kunde kunde = new Kunde();
         kunde.setEmail("max@mustermann.de");
