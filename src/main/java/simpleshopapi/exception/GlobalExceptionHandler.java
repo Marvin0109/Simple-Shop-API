@@ -37,11 +37,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(BestellpositionNotFoundException.class)
-    public ResponseEntity<String> handleBestellpositionNotFound(BestellpositionNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
     @ExceptionHandler(KundeNotFoundException.class)
     public ResponseEntity<String> handleKundeNotFound(KundeNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
