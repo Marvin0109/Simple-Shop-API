@@ -1,7 +1,7 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
-import simpleshopapi.exception.BestellungNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Bestellung;
 import simpleshopapi.repositories.BestellungRepository;
 
@@ -22,7 +22,7 @@ public class BestellungService {
 
     public Bestellung findById(Integer id) {
         return repository.findById(id)
-            .orElseThrow(() -> new BestellungNotFoundException(id));
+            .orElseThrow(() -> new NotFoundException("Bestellung with id " + id + " not found!"));
     }
 
     public Bestellung create(Bestellung bestellung) {
@@ -32,7 +32,7 @@ public class BestellungService {
     public void delete(Integer id) {
         boolean deleted = repository.deleteById(id);
         if (!deleted) {
-            throw new BestellungNotFoundException(id);
+            throw new NotFoundException("Bestellung with id " + id +  " not found!");
         }
     }
 }

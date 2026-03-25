@@ -17,16 +17,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(BestellungNotFoundException.class)
-    public ResponseEntity<String> handleBestellungNotFound(BestellungNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
-    @ExceptionHandler(KundeNotFoundException.class)
-    public ResponseEntity<String> handleKundeNotFound(KundeNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<String> handleUnauthorized(UnauthorizedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -35,7 +25,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception ex) {
         Map<String, Object> response = new HashMap<>();
-        response.put("error", "Interner Serverfehler");
+        response.put("error", "Internal Server Error");
         response.put("message", ex.getMessage());
         response.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
 

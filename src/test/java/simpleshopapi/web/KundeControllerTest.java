@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.KundenController;
-import simpleshopapi.exception.KundeNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Kunde;
 import simpleshopapi.service.KundenService;
 
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(KundenController.class)
-public class KundeControllerTest {
+class KundeControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -77,7 +77,7 @@ public class KundeControllerTest {
 
     @Test
     void getKunden_notFound() throws Exception {
-        when(service.findById(99)).thenThrow(new KundeNotFoundException(99));
+        when(service.findById(99)).thenThrow(new NotFoundException("Kunde with id " + 99 + " not found!"));
 
         mvc.perform(get("/kunden")
                 .param("id", "99"))
@@ -165,7 +165,8 @@ public class KundeControllerTest {
 
     @Test
     void updateKunde_notFound_returns404() throws Exception {
-        doThrow(new KundeNotFoundException(99)).when(service).update(eq(99), any(Kunde.class));
+        doThrow(new NotFoundException("Kunde with id " + 99 + " not found!"))
+                .when(service).update(eq(99), any(Kunde.class));
 
         mvc.perform(put("/kunden")
                     .param("id", "99")

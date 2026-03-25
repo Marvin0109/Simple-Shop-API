@@ -1,7 +1,7 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
-import simpleshopapi.exception.KundeNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Kunde;
 import simpleshopapi.repositories.KundenRepository;
 
@@ -22,12 +22,12 @@ public class KundenService {
 
     public Kunde findById(Integer id) {
         return repository.findById(id)
-            .orElseThrow(() -> new KundeNotFoundException(id));
+            .orElseThrow(() -> new NotFoundException("Kunde with id " + id + " not found!"));
     }
 
     public Kunde findByEmail(String email) {
         return repository.findByEmail(email)
-            .orElseThrow(() -> new KundeNotFoundException(email));
+            .orElseThrow(() -> new NotFoundException("Kunde with email " + email + " not found!"));
     }
 
     public Kunde create(Kunde kunde) {
@@ -41,7 +41,7 @@ public class KundenService {
 
         int updated = repository.updateKunde(kunde);
         if (updated == 0) {
-            throw new KundeNotFoundException(id);
+            throw new NotFoundException("Kunde with id " + id + " not found!");
         }
 
         return kunde;
