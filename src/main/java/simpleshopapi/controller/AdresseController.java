@@ -22,33 +22,58 @@ public class AdresseController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAdresse(@RequestParam(required = false) Integer id) {
-        if (id == null) {
-            return ResponseEntity.ok(service.findAll());
-        }
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<List<Adresse>> getAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Adresse> getById(@PathVariable Integer id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> createAdresse(@Valid @RequestBody Adresse adresse,
-                                           BindingResult bindingResult) {
+    public ResponseEntity<?> createAdresse(
+            @Valid @RequestBody Adresse adresse,
+            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
         }
         Adresse saved = service.create(adresse);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateAdresse(
+    public ResponseEntity<?> updateAdresse(
             @PathVariable Integer id,
-            @RequestBody Adresse adresse) {
+            @Valid @RequestBody Adresse adresse,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
+        }
 
         service.update(id, adresse);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAdresse(@PathVariable Integer id) {
+        service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

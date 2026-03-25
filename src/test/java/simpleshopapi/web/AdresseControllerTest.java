@@ -12,6 +12,7 @@ import simpleshopapi.model.Adresse;
 import simpleshopapi.service.AdresseService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,10 +49,10 @@ class AdresseControllerTest {
         Adresse a = new Adresse();
         a.setAdresseId(1);
         a.setStrasse("Musterstraße");
-        when(service.findById(1)).thenReturn(a);
 
-        mvc.perform(get("/adressen")
-                .param("id", "1"))
+        when(service.findById(1)).thenReturn(Optional.of(a));
+
+        mvc.perform(get("/adressen/{id}", 1))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.adresseId").value(1))
@@ -60,9 +61,9 @@ class AdresseControllerTest {
 
     @Test
     void getAdresse_notFound_returns404() throws Exception {
-        when(service.findById(99)).thenThrow(new NotFoundException("Adresse with id " + 99 + " not found!"));
+        when(service.findById(99)).thenReturn(Optional.empty());
 
-        mvc.perform(get("/adressen").param("id", "99"))
+        mvc.perform(get("/adressen/{id}", 99))
             .andExpect(status().isNotFound());
     }
 
@@ -70,7 +71,7 @@ class AdresseControllerTest {
     void createAdresse_returnsCreated() throws Exception {
         Adresse saved = new Adresse();
         saved.setAdresseId(1);
-        saved.setStrasse("Neue Straße");
+        saved.setStrasse("Hauptstraße");
 
         when(service.create(any(Adresse.class))).thenReturn(saved);
 
@@ -88,7 +89,7 @@ class AdresseControllerTest {
                 """))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.adresseId").value(1))
-            .andExpect(jsonPath("$.strasse").value("Neue Straße"));
+            .andExpect(jsonPath("$.strasse").value("Hauptstraße"));
     }
 
     @Test
@@ -97,7 +98,12 @@ class AdresseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                        "strasse": "Updated Straße"
+                        "aktiv": false,
+                        "strasse": "Linienstraße",
+                        "hausnummer": "1",
+                        "plz": "10115",
+                        "ort": "Berlin",
+                        "land": "Deutschland"
                     }
                 """))
             .andExpect(status().isNoContent());
@@ -112,9 +118,29 @@ class AdresseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
-                        "strasse": "Updated Straße"
+                        "aktiv": false,
+                        "strasse": "Linienstraße",
+                        "hausnummer": "1",
+                        "plz": "10115",
+                        "ort": "Berlin",
+                        "land": "Deutschland"
                     }
                 """))
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteAdresse_success() throws Exception {
+        mvc.perform(delete("/adressen/{id}", 1))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteAdresse_notFound() throws Exception {
+        doThrow(new NotFoundException("Adresse with id " + 99 + " not found!"))
+                .when(service).deleteById(99);
+
+        mvc.perform(delete("/adressen/{id}", 99))
+                .andExpect(status().isNotFound());
     }
 }

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestcontainerConfiguration.class)
 @Sql(scripts = "/schema-test.sql")
-public class AdresseContainerTest {
+class AdresseContainerTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -41,8 +41,7 @@ public class AdresseContainerTest {
         adresse.setLand("Deutschland");
 
         // CREATE
-        Adresse saved = repository.createAdresse(adresse);
-        assertThat(saved.getAdresseId()).isNotNull();
+        Adresse saved = repository.save(adresse);
 
         // FIND
         Adresse found = repository.findById(saved.getAdresseId()).orElseThrow();
@@ -52,7 +51,7 @@ public class AdresseContainerTest {
         // UPDATE
         saved.setOrt("Neue Stadt");
         saved.setAktiv(false);
-        int updatedRows = repository.updateAdresse(saved);
+        int updatedRows = repository.updateAdresse(saved.getAdresseId() ,saved);
         assertThat(updatedRows).isEqualTo(1);
 
         Adresse updated = repository.findById(saved.getAdresseId()).orElseThrow();
@@ -62,5 +61,10 @@ public class AdresseContainerTest {
         List<Adresse> all = repository.findAll();
         assertThat(all).isNotEmpty();
         assertThat(all).extracting("adresseId").contains(saved.getAdresseId());
+
+        // DELETE
+        int deletedRows = repository.deleteById(saved.getAdresseId());
+        assertThat(deletedRows).isEqualTo(1);
+        assertThat(repository.findById(saved.getAdresseId())).isEmpty();
     }
 }

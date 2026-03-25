@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -24,11 +25,12 @@ public class AdresseRepository {
 
     public Optional<Adresse> findById(int id) {
         String sql = "SELECT * FROM adresse WHERE adresse_id = ?";
-        List<Adresse> result = jdbcTemplate.query(sql, ADRESSE_ROW_MAPPER, id);
-        return result.stream().findFirst();
+        return jdbcTemplate.query(sql, ADRESSE_ROW_MAPPER, id)
+                .stream()
+                .findFirst();
     }
 
-    public Adresse createAdresse(Adresse adresse) {
+    public Adresse save(Adresse adresse) {
         String sql = "INSERT INTO adresse (aktiv, strasse, hausnummer, plz, ort, land) " +
                 "VALUES (?, ?, ?, ?, ?, ?) RETURNING adresse_id";
 
@@ -43,15 +45,11 @@ public class AdresseRepository {
                 adresse.getLand()
         );
 
-        if (id != null) {
-            adresse.setAdresseId(id);
-        } else {
-            throw new RuntimeException("Adresse id is null");
-        }
+        adresse.setAdresseId(Objects.requireNonNull(id));
         return adresse;
     }
 
-    public int updateAdresse(Adresse adresse) {
+    public int updateAdresse(int id, Adresse adresse) {
         String sql = """
         UPDATE adresse
         SET aktiv = ?,
@@ -71,8 +69,13 @@ public class AdresseRepository {
             adresse.getPlz(),
             adresse.getOrt(),
             adresse.getLand(),
-            adresse.getAdresseId()
+            id
         );
+    }
+
+    public int deleteById(int id) {
+        String sql = "DELETE FROM adresse WHERE adresse_id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 
     private static final RowMapper<Adresse> ADRESSE_ROW_MAPPER =

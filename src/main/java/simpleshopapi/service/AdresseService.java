@@ -6,6 +6,7 @@ import simpleshopapi.model.Adresse;
 import simpleshopapi.repositories.AdresseRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdresseService {
@@ -20,19 +21,26 @@ public class AdresseService {
         return repository.findAll();
     }
 
-    public Adresse findById(Integer id) {
-        return repository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Adresse with id " + id + " not found!"));
+    public Optional<Adresse> findById(Integer id) {
+        return repository.findById(id);
     }
 
     public Adresse create(Adresse adresse) {
-        return repository.createAdresse(adresse);
+        return repository.save(adresse);
     }
 
     public void update(Integer id, Adresse adresse) {
-        int updated = repository.updateAdresse(adresse);
+        int updated = repository.updateAdresse(id, adresse);
 
         if (updated == 0) {
+            throw new NotFoundException("Adresse with id " + id + " not found!");
+        }
+    }
+
+    public void deleteById(Integer id) {
+        int deleted = repository.deleteById(id);
+
+        if (deleted == 0) {
             throw new NotFoundException("Adresse with id " + id + " not found!");
         }
     }
