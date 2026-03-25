@@ -1,7 +1,7 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
-import simpleshopapi.exception.MitarbeiterNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.repositories.MitarbeiterRepository;
 
@@ -22,7 +22,7 @@ public class MitarbeiterService {
 
     public Mitarbeiter findById(int id) {
         return repository.findById(id)
-            .orElseThrow(() -> new MitarbeiterNotFoundException(id));
+            .orElseThrow(() -> new NotFoundException("Mitarbeiter with id " + id + " not found!"));
     }
 
     public Mitarbeiter create(Mitarbeiter m) {
@@ -32,7 +32,7 @@ public class MitarbeiterService {
     public void delete(int id) {
         boolean deleted = repository.deleteById(id);
         if (!deleted) {
-            throw new MitarbeiterNotFoundException(id);
+            throw new NotFoundException("Mitarbeiter with id " + id + " not found!");
         }
     }
 }

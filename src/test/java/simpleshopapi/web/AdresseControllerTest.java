@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.AdresseController;
-import simpleshopapi.exception.AdresseNotFoundException;
 import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Adresse;
 import simpleshopapi.service.AdresseService;
@@ -61,7 +60,7 @@ class AdresseControllerTest {
 
     @Test
     void getAdresse_notFound_returns404() throws Exception {
-        when(service.findById(99)).thenThrow(new AdresseNotFoundException(99));
+        when(service.findById(99)).thenThrow(new NotFoundException("Adresse with id " + 99 + " not found!"));
 
         mvc.perform(get("/adressen").param("id", "99"))
             .andExpect(status().isNotFound());
