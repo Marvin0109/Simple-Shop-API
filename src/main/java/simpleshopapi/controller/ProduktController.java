@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.ProduktService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,44 +21,49 @@ public class ProduktController {
     }
 
     @GetMapping
-    public ResponseEntity<?> findAll(
-            @RequestParam(required = false) String sku) {
+    public ResponseEntity<List<Produkt>> getAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
 
-        if (sku == null) {
-            return ResponseEntity.ok(service.findAll());
-        }
-
-        return ResponseEntity.ok(service.findBySku(sku));
+    @GetMapping("/{sku}")
+    public ResponseEntity<Produkt> getBySku(@PathVariable String sku) {
+        return service.findBySku(sku)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> createProdukt(@Valid @RequestBody Produkt produkt,
-                                                 BindingResult bindingResult) {
+    public ResponseEntity<?> createProdukt(
+            @Valid @RequestBody Produkt produkt,
+            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
         }
 
         Produkt saved = service.create(produkt);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteProdukt(@RequestParam String sku) {
+    @PatchMapping("/{sku}/lagerbestand")
+    public ResponseEntity<Void> updateLagerbestand(
+            @PathVariable String sku,
+            @RequestBody Integer lagerbestand) {
 
-        service.delete(sku);
+        service.updateLagerbestand(sku, lagerbestand);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping
-    public ResponseEntity<?> updateLagerbestand(
-            @RequestParam String sku,
-            @RequestParam Integer lagerbestand) {
-
-        int updated = service.updateLagerbestand(sku, lagerbestand);
-        return ResponseEntity.ok(updated);
+    @DeleteMapping("/{sku}")
+    public ResponseEntity<Void> deleteProdukt(@PathVariable String sku) {
+        service.delete(sku);
+        return ResponseEntity.noContent().build();
     }
 }

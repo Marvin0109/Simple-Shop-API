@@ -13,6 +13,7 @@ import simpleshopapi.service.ProduktService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -48,10 +49,9 @@ class ProduktControllerTest {
         p.setSku("SKU-0000");
         p.setName("Test Produkt");
 
-        when(service.findBySku("SKU-0000")).thenReturn(p);
+        when(service.findBySku("SKU-0000")).thenReturn(Optional.of(p));
 
-        mvc.perform(get("/produkte")
-                .param("sku", "SKU-0000"))
+        mvc.perform(get("/produkte/{sku}","SKU-0000"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.sku").value("SKU-0000"))
             .andExpect(jsonPath("$.name").value("Test Produkt"));
@@ -59,9 +59,9 @@ class ProduktControllerTest {
 
     @Test
     void getProdukt_withSKU_notFound() throws Exception{
-        when(service.findBySku("Invalid sku")).thenThrow(new NotFoundException("Invalid sku"));
+        when(service.findBySku("SKU-0000")).thenThrow(new NotFoundException("Produkt with sku SKU-0000 not found!"));
 
-        mvc.perform(get("/produkte").param("sku", "Invalid sku"))
+        mvc.perform(get("/produkte/{sku}", "SKU-0000"))
             .andExpect(status().isNotFound());
     }
 
@@ -113,48 +113,44 @@ class ProduktControllerTest {
     void deleteProdukt_existing_returnsNoContent() throws Exception{
         doNothing().when(service).delete("SKU-0000");
 
-        mvc.perform(delete("/produkte").param("sku", "SKU-0000"))
+        mvc.perform(delete("/produkte/{sku}", "SKU-0000"))
             .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteProdukt_notFound_returns404() throws Exception {
-        doThrow(new NotFoundException("Invalid SKU")).when(service).delete("Invalid SKU");
+        doThrow(new NotFoundException("Produkt with sku SKU-0000 not found!")).when(service).delete("SKU-0000");
 
-        mvc.perform(delete("/produkte")
-                .param("sku", "Invalid SKU"))
+        mvc.perform(delete("/produkte/{sku}", "SKU-0000"))
             .andExpect(status().isNotFound());
     }
 
     @Test
     void updateLagerbestand_success_returnsUpdated() throws Exception {
-        when(service.updateLagerbestand("SKU-0000", 10)).thenReturn(1);
-
-        mvc.perform(put("/produkte")
-            .param("sku", "SKU-0000")
-            .param("lagerbestand", "10"))
-            .andExpect(status().isOk())
-            .andExpect(content().string("1"));
+        mvc.perform(patch("/produkte/{sku}/lagerbestand", "SKU-0000")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("10"))
+            .andExpect(status().isNoContent());
     }
 
     @Test
     void updateLagerbestand_nullParam_returns400() throws Exception {
-        doThrow(new IllegalArgumentException("SKU und Lagerbestand müssen gesetzt werden"))
-            .when(service).updateLagerbestand("SKU-0000", null);
-
-        mvc.perform(put("/produkte")
-                .param("sku", "SKU-0000"))
+        doThrow(new IllegalArgumentException("Lagerbestand is null!"))
+                .when(service).updateLagerbestand("SKU-0000", null);
+        mvc.perform(patch("/produkte/{sku}/lagerbestand", "SKU-0000")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(""))
             .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateLagerbestand_notFound_returns404() throws Exception {
-        doThrow(new NotFoundException("Invalid sku"))
-            .when(service).updateLagerbestand("Invalid sku", 5);
+        doThrow(new NotFoundException("Produkt with sku SKU-0000 not found!"))
+            .when(service).updateLagerbestand("SKU-0000", 5);
 
-        mvc.perform(put("/produkte")
-                .param("sku", "Invalid sku")
-                .param("lagerbestand", "5"))
+        mvc.perform(patch("/produkte/{sku}/lagerbestand",  "SKU-0000")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("5"))
             .andExpect(status().isNotFound());
     }
 }

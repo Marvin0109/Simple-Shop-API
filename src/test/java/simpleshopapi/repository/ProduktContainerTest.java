@@ -14,13 +14,14 @@ import simpleshopapi.repositories.ProduktRepository;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(TestcontainerConfiguration.class)
 @Sql("/schema-test.sql")
-public class ProduktContainerTest {
+class ProduktContainerTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -31,9 +32,11 @@ public class ProduktContainerTest {
     void setUp() {
         repository = new ProduktRepository(jdbcTemplate);
 
-        jdbcTemplate.update("INSERT INTO mitarbeiter (vorname, nachname, email, passwort) " +
+        jdbcTemplate.update(
+                "INSERT INTO mitarbeiter (vorname, nachname, email, passwort) " +
                 "VALUES ('Max','Mustermann','max@test.de','pw123!')");
-        mitarbeiterId = jdbcTemplate.queryForObject("SELECT personal_nr FROM mitarbeiter LIMIT 1",
+        mitarbeiterId = jdbcTemplate.queryForObject(
+                "SELECT personal_nr FROM mitarbeiter LIMIT 1",
                 Integer.class);
     }
 
@@ -59,7 +62,7 @@ public class ProduktContainerTest {
         assertEquals(20, repository.findBySKU("SKU-0000").get().getLagerbestand());
 
         // DELETE
-        assertTrue(repository.deleteBySKU("SKU-0000"));
+        assertThat(repository.deleteBySKU("SKU-0000")).isEqualTo(1);
         assertFalse(repository.findBySKU("SKU-0000").isPresent());
     }
 }

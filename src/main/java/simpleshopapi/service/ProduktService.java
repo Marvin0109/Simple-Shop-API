@@ -6,6 +6,7 @@ import simpleshopapi.model.Produkt;
 import simpleshopapi.repositories.ProduktRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProduktService {
@@ -20,9 +21,8 @@ public class ProduktService {
         return repository.findAll();
     }
 
-    public Produkt findBySku(String sku) {
-        return repository.findBySKU(sku)
-            .orElseThrow(() -> new NotFoundException("Produkt with SKU " + sku + " not found!"));
+    public Optional<Produkt> findBySku(String sku) {
+        return repository.findBySKU(sku);
     }
 
     public Produkt create(Produkt produkt) {
@@ -30,13 +30,14 @@ public class ProduktService {
     }
 
     public void delete(String sku) {
-        boolean deleted = repository.deleteBySKU(sku);
-        if (!deleted) {
+        int deleted = repository.deleteBySKU(sku);
+
+        if (deleted == 0) {
             throw new NotFoundException("Produkt with SKU " + sku + " not found!");
         }
     }
 
-    public int updateLagerbestand(String sku, Integer lagerbestand) {
+    public void updateLagerbestand(String sku, Integer lagerbestand) {
         if (sku == null || lagerbestand == null) {
             throw new IllegalArgumentException("SKU und Lagerbestand müssen gesetzt werden");
         }
@@ -46,7 +47,5 @@ public class ProduktService {
         if (updated == 0) {
             throw new NotFoundException("Produkt with SKU " + sku + " not found!");
         }
-
-        return updated;
     }
 }

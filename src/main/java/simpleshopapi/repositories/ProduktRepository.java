@@ -1,5 +1,6 @@
 package simpleshopapi.repositories;
 
+import org.springframework.dao.DuplicateKeyException;
 import simpleshopapi.model.Produkt;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,30 +25,38 @@ public class ProduktRepository {
 
     public Optional<Produkt> findBySKU(String sku) {
         String sql = "SELECT * FROM produkt WHERE sku = ?";
-        List<Produkt> result = jdbcTemplate.query(sql, PRODUKT_ROW_MAPPER, sku);
-        return result.stream().findFirst();
+        return jdbcTemplate.query(sql, PRODUKT_ROW_MAPPER, sku)
+                .stream()
+                .findFirst();
     }
 
     public Produkt createProdukt(Produkt produkt) {
+        if (findBySKU(produkt.getSku()).isPresent()) {
+            throw new IllegalStateException("Produkt exists with sku " + produkt.getSku());
+        }
+
         String sql = "INSERT INTO produkt (sku, name, preis, lagerbestand, angelegt_von) " +
         "VALUES (?, ?, ?, ?, ?)";
 
-        jdbcTemplate.update(
-                sql,
-                produkt.getSku(),
-                produkt.getName(),
-                produkt.getPreis(),
-                produkt.getLagerbestand(),
-                produkt.getAngelegtVon()
-        );
+        try {
+            jdbcTemplate.update(
+                    sql,
+                    produkt.getSku(),
+                    produkt.getName(),
+                    produkt.getPreis(),
+                    produkt.getLagerbestand(),
+                    produkt.getAngelegtVon()
+            );
+        } catch (DuplicateKeyException e) {
+            throw new IllegalStateException("Produkt exists with sku " + produkt.getSku());
+        }
 
         return produkt;
     }
 
-    public boolean deleteBySKU(String sku) {
+    public int deleteBySKU(String sku) {
         String sql = "DELETE FROM produkt WHERE sku = ?";
-        int rowsAffected = jdbcTemplate.update(sql, sku);
-        return rowsAffected > 0;
+        return jdbcTemplate.update(sql, sku);
     }
 
     public int updateLagerbestand(String sku, int lagerbestand) {
