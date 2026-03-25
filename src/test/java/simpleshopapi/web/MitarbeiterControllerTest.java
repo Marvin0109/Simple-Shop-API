@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.MitarbeiterController;
-import simpleshopapi.exception.MitarbeiterNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.service.MitarbeiterService;
 
@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MitarbeiterController.class)
-public class MitarbeiterControllerTest {
+class MitarbeiterControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -56,7 +56,7 @@ public class MitarbeiterControllerTest {
 
     @Test
     void getMitarbeiter_withId_notFound() throws Exception {
-        when(service.findById(99)).thenThrow(new MitarbeiterNotFoundException(99));
+        when(service.findById(99)).thenThrow(new NotFoundException("Mitarbeiter with id " + 99 + " not found!"));
 
         mvc.perform(get("/mitarbeiter").param("id", "99"))
             .andExpect(status().isNotFound());
@@ -128,7 +128,7 @@ public class MitarbeiterControllerTest {
 
     @Test
     void deleteMitarbeiter_notFound_returns404() throws Exception {
-        doThrow(new MitarbeiterNotFoundException(99)).when(service).delete(99);
+        doThrow(new NotFoundException("Mitarbeiter with id " + 99 + " not found!")).when(service).delete(99);
 
         mvc.perform(delete("/mitarbeiter")
                 .param("id", "99"))

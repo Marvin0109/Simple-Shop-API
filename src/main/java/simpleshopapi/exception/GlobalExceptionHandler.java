@@ -17,11 +17,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(MitarbeiterNotFoundException.class)
-    public ResponseEntity<?> handleMitarbeiterNotFound(MitarbeiterNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
     @ExceptionHandler(ProduktNotFoundException.class)
     public ResponseEntity<?> handleProduktNotFound(ProduktNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -29,11 +24,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BestellungNotFoundException.class)
     public ResponseEntity<String> handleBestellungNotFound(BestellungNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
-    @ExceptionHandler(AdresseNotFoundException.class)
-    public ResponseEntity<String> handleAdresseNotFound(AdresseNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 

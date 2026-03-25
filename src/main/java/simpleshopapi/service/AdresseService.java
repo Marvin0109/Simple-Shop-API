@@ -1,7 +1,6 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
-import simpleshopapi.exception.AdresseNotFoundException;
 import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Adresse;
 import simpleshopapi.repositories.AdresseRepository;
