@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.BestellungController;
-import simpleshopapi.exception.BestellungNotFoundException;
+import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Bestellung;
 import simpleshopapi.service.BestellungService;
 
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BestellungController.class)
-public class BestellungControllerTest {
+class BestellungControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -58,7 +58,7 @@ public class BestellungControllerTest {
 
     @Test
     void getBestellungen_withId_notFound() throws Exception {
-        when(service.findById(99)).thenThrow(new BestellungNotFoundException(99));
+        when(service.findById(99)).thenThrow(new NotFoundException("Bestellung with id " + 99 + " not found!"));
 
         mvc.perform(get("/bestellungen").param("id", "99"))
             .andExpect(status().isNotFound());
@@ -115,7 +115,8 @@ public class BestellungControllerTest {
 
     @Test
     void deleteBestellungen_notFound_returns404() throws Exception {
-        doThrow(new BestellungNotFoundException(99)).when(service).delete(99);
+        doThrow(new NotFoundException("Bestellung with id " + 99 + " not found!"))
+                .when(service).delete(99);
 
         mvc.perform(delete("/bestellungen")
                 .param("id", "99"))
