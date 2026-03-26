@@ -3,12 +3,12 @@ package simpleshopapi.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.model.Mitarbeiter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.MitarbeiterService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,14 +22,16 @@ public class MitarbeiterController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getMitarbeiter(
-            @RequestParam(required = false) Integer id) {
+    public ResponseEntity<List<LoadMitarbeiterDTO>> getAll() {
+        return ResponseEntity.ok(service.findAll());
+    }
 
-        if (id == null) {
-            return ResponseEntity.ok(service.findAll());
-        }
-
-        return ResponseEntity.ok(service.findById(id));
+    @GetMapping("/{personalNr}")
+    public ResponseEntity<LoadMitarbeiterDTO> getMitarbeiter(
+            @PathVariable Integer personalNr) {
+        return service.findById(personalNr)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -38,23 +40,25 @@ public class MitarbeiterController {
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
-        Mitarbeiter saved = service.create(mitarbeiter);
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
 
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        LoadMitarbeiterDTO saved = service.create(mitarbeiter);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(saved);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{personalNr}")
     public ResponseEntity<Void> deleteMitarbeiter(
-            @RequestParam int id) {
+            @PathVariable Integer personalNr) {
 
-        service.delete(id);
+        service.delete(personalNr);
         return ResponseEntity.noContent().build();
     }
 }

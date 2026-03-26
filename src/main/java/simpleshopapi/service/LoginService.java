@@ -3,6 +3,7 @@ package simpleshopapi.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import simpleshopapi.dto.LoadKundeDTO;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.exception.UnauthorizedException;
 import simpleshopapi.model.Kunde;
 import simpleshopapi.dto.KundeLoginDTO;
@@ -26,21 +27,30 @@ public class LoginService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Mitarbeiter loginMitarbeiter(MitarbeiterLoginDTO login) {
-        Mitarbeiter m = mRepo.login(login);
-        if (m.getPersonalNr() == null) {
-            throw new UnauthorizedException("Ungültiger Login-Daten für Mitarbeiter");
+    public LoadMitarbeiterDTO loginMitarbeiter(MitarbeiterLoginDTO login) {
+        Optional<Mitarbeiter> mitarbeiterOptional = mRepo.findById(login.getPersonalNr());
+
+        Mitarbeiter m =  mitarbeiterOptional.orElseThrow(() -> new UnauthorizedException("Ungültige Personalnummer"));
+
+        if (!passwordEncoder.matches(login.getPasswort(), m.getPasswort())) {
+            throw new UnauthorizedException("Ungültiges Passwort");
         }
-        return m;
+
+        return new LoadMitarbeiterDTO(
+                m.getPersonalNr(),
+                m.getEmail(),
+                m.getVorname(),
+                m.getNachname()
+        );
     }
 
     public LoadKundeDTO loginKunde(KundeLoginDTO login) {
         Optional<Kunde> kundeOptional = kRepo.findByEmail(login.getEmail());
 
-        Kunde k = kundeOptional.orElseThrow(() -> new UnauthorizedException("Ungültige Login-Daten"));
+        Kunde k = kundeOptional.orElseThrow(() -> new UnauthorizedException("Ungültige Email"));
 
         if (!passwordEncoder.matches(login.getPasswort(), k.getPasswort())) {
-            throw new UnauthorizedException("Ungültige Login-Daten");
+            throw new UnauthorizedException("Ungültiges Passwort");
         }
 
         return new LoadKundeDTO(

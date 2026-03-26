@@ -7,8 +7,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.dto.LoadKundeDTO;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
+import simpleshopapi.dto.MitarbeiterLoginDTO;
 import simpleshopapi.exception.UnauthorizedException;
 import simpleshopapi.model.Kunde;
+import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.repositories.KundenRepository;
 import simpleshopapi.repositories.MitarbeiterRepository;
 
@@ -72,6 +75,44 @@ class LoginServiceTest {
                 .thenReturn(false);
 
         assertThatThrownBy(() -> service.loginKunde(k))
+                .isInstanceOf(UnauthorizedException.class);
+    }
+
+    @Test
+    void loginMitarbeiter() {
+        MitarbeiterLoginDTO m = new MitarbeiterLoginDTO();
+        m.setPersonalNr(1);
+        m.setPasswort("passwort");
+
+        Mitarbeiter loaded = new Mitarbeiter();
+        loaded.setPersonalNr(1);
+        loaded.setPasswort("hashed");
+
+        when(mitarbeiterRepository.findById(1)).thenReturn(Optional.of(loaded));
+        when(encoder.matches("passwort", "hashed")).thenReturn(true);
+
+        LoadMitarbeiterDTO loggedIn = service.loginMitarbeiter(m);
+
+        assertThat(loggedIn.personalNr()).isEqualTo(1);
+    }
+
+    @Test
+    void loginMitarbeiter_wrongPassword() {
+        MitarbeiterLoginDTO m = new MitarbeiterLoginDTO();
+        m.setPersonalNr(1);
+        m.setPasswort("wrong");
+
+        Mitarbeiter loaded = new Mitarbeiter();
+        loaded.setPersonalNr(1);
+        loaded.setPasswort("hashed");
+
+        when(mitarbeiterRepository.findById(1))
+                .thenReturn(Optional.of(loaded));
+
+        when(encoder.matches("wrong", "hashed"))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> service.loginMitarbeiter(m))
                 .isInstanceOf(UnauthorizedException.class);
     }
 }

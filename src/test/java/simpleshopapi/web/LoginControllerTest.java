@@ -8,11 +8,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.LoginController;
 import simpleshopapi.dto.LoadKundeDTO;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.exception.UnauthorizedException;
 import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.dto.MitarbeiterLoginDTO;
 import simpleshopapi.service.LoginService;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -31,9 +34,12 @@ class LoginControllerTest {
 
     @Test
     void loginMitarbeiter_success_returns200() throws Exception {
-        Mitarbeiter m = new Mitarbeiter();
-        m.setPersonalNr(1);
-        m.setVorname("Max");
+        LoadMitarbeiterDTO m = new LoadMitarbeiterDTO(
+                1,
+                "",
+                "Max",
+                ""
+        );
 
         when(service.loginMitarbeiter(any(MitarbeiterLoginDTO.class))).thenReturn(m);
 
@@ -47,7 +53,8 @@ class LoginControllerTest {
                 """))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.personalNr").value(1))
-            .andExpect(jsonPath("$.vorname").value("Max"));
+            .andExpect(jsonPath("$.vorname").value("Max"))
+            .andExpect(jsonPath("$.passwort").doesNotExist());
     }
 
     @Test

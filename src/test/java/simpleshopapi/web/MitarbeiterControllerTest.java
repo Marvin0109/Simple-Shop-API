@@ -7,11 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.MitarbeiterController;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.service.MitarbeiterService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,9 +31,12 @@ class MitarbeiterControllerTest {
 
     @Test
     void getMitarbeiter() throws Exception {
-        Mitarbeiter m = new Mitarbeiter();
-        m.setPersonalNr(1);
-        m.setEmail("max@firma.de");
+        LoadMitarbeiterDTO m = new LoadMitarbeiterDTO(
+                1,
+                "max@firma.de",
+                "",
+                ""
+        );
         when(service.findAll()).thenReturn(List.of(m));
 
         mvc.perform(get("/mitarbeiter"))
@@ -43,12 +48,15 @@ class MitarbeiterControllerTest {
 
     @Test
     void getMitarbeiter_withId() throws Exception {
-        Mitarbeiter m =  new Mitarbeiter();
-        m.setPersonalNr(1);
-        m.setVorname("Max");
-        when(service.findById(1)).thenReturn(m);
+        LoadMitarbeiterDTO m =  new LoadMitarbeiterDTO(
+                1,
+                "",
+                "Max",
+                ""
+        );
+        when(service.findById(1)).thenReturn(Optional.of(m));
 
-        mvc.perform(get("/mitarbeiter").param("id", "1"))
+        mvc.perform(get("/mitarbeiter/{personalNr}", 1))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.personalNr").value(1))
             .andExpect(jsonPath("$.vorname").value("Max"));
@@ -58,16 +66,18 @@ class MitarbeiterControllerTest {
     void getMitarbeiter_withId_notFound() throws Exception {
         when(service.findById(99)).thenThrow(new NotFoundException("Mitarbeiter with id " + 99 + " not found!"));
 
-        mvc.perform(get("/mitarbeiter").param("id", "99"))
+        mvc.perform(get("/mitarbeiter/{personalNr}", 99))
             .andExpect(status().isNotFound());
     }
 
     @Test
     void createMitarbeiter_success_returnsCreated() throws Exception {
-
-        Mitarbeiter saved = new Mitarbeiter();
-        saved.setPersonalNr(1);
-        saved.setVorname("Max");
+        LoadMitarbeiterDTO saved = new LoadMitarbeiterDTO(
+                1,
+                "",
+                "Max",
+                ""
+        );
 
         when(service.create(any(Mitarbeiter.class))).thenReturn(saved);
 
@@ -83,12 +93,12 @@ class MitarbeiterControllerTest {
                 """))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.personalNr").value(1))
-            .andExpect(jsonPath("$.vorname").value("Max"));
+            .andExpect(jsonPath("$.vorname").value("Max"))
+            .andExpect(jsonPath("$.passwort").doesNotExist());
     }
 
     @Test
     void createMitarbeiter_fail_returnsCreated() throws Exception {
-
         mvc.perform(post("/mitarbeiter")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
@@ -104,7 +114,6 @@ class MitarbeiterControllerTest {
 
     @Test
     void createMitarbeiter_fail2_returnsCreated() throws Exception {
-
         mvc.perform(post("/mitarbeiter")
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
@@ -121,8 +130,7 @@ class MitarbeiterControllerTest {
     void deleteMitarbeiter_existing_returnsNoContent() throws Exception {
         doNothing().when(service).delete(1);
 
-        mvc.perform(delete("/mitarbeiter")
-                .param("id", "1"))
+        mvc.perform(delete("/mitarbeiter/{personalNr}", 1))
             .andExpect(status().isNoContent());
     }
 
@@ -130,8 +138,7 @@ class MitarbeiterControllerTest {
     void deleteMitarbeiter_notFound_returns404() throws Exception {
         doThrow(new NotFoundException("Mitarbeiter with id " + 99 + " not found!")).when(service).delete(99);
 
-        mvc.perform(delete("/mitarbeiter")
-                .param("id", "99"))
+        mvc.perform(delete("/mitarbeiter/{personalNr}", 99))
             .andExpect(status().isNotFound());
     }
 

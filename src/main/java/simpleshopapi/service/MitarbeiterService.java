@@ -1,11 +1,13 @@
 package simpleshopapi.service;
 
 import org.springframework.stereotype.Service;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.repositories.MitarbeiterRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MitarbeiterService {
@@ -16,23 +18,39 @@ public class MitarbeiterService {
         this.repository = repository;
     }
 
-    public List<Mitarbeiter> findAll() {
-        return repository.findAll();
+    public List<LoadMitarbeiterDTO> findAll() {
+        return repository.findAll().stream()
+                .map(MitarbeiterService::map)
+                .toList();
     }
 
-    public Mitarbeiter findById(int id) {
-        return repository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Mitarbeiter with id " + id + " not found!"));
+    public Optional<LoadMitarbeiterDTO> findById(Integer id) {
+        Optional<Mitarbeiter> mitarbeiter = repository.findById(id);
+        if (mitarbeiter.isPresent()) {
+            Mitarbeiter loaded = mitarbeiter.get();
+            return Optional.of(map(loaded));
+        }
+        return Optional.empty();
     }
 
-    public Mitarbeiter create(Mitarbeiter m) {
-        return repository.createMitarbeiter(m);
+    public LoadMitarbeiterDTO create(Mitarbeiter m) {
+        return map(repository.save(m));
     }
 
     public void delete(int id) {
-        boolean deleted = repository.deleteById(id);
-        if (!deleted) {
+        int deleted = repository.deleteById(id);
+
+        if (deleted == 0) {
             throw new NotFoundException("Mitarbeiter with id " + id + " not found!");
         }
+    }
+
+    private static LoadMitarbeiterDTO map(Mitarbeiter m) {
+        return new LoadMitarbeiterDTO(
+                m.getPersonalNr(),
+                m.getEmail(),
+                m.getVorname(),
+                m.getNachname()
+        );
     }
 }

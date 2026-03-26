@@ -19,7 +19,6 @@ public class KundenService {
     }
 
     public List<LoadKundeDTO> findAll() {
-
         return repository.findAll().stream()
                 .map(KundenService::map)
                 .toList();

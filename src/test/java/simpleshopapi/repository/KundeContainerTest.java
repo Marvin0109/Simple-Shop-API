@@ -13,14 +13,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import simpleshopapi.dto.AdresseMitTypDTO;
-import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.model.Adresse;
 import simpleshopapi.model.Kunde;
 import simpleshopapi.repositories.AdresseRepository;
 import simpleshopapi.repositories.KundenRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,14 +97,6 @@ class KundeContainerTest {
 
         Kunde updated = kundenRepository.findById(savedKunde.getKundeId()).orElseThrow();
         assertThat(updated.getVorname()).isEqualTo("Moritz");
-
-        KundeLoginDTO loginDTO = new KundeLoginDTO();
-        loginDTO.setEmail("max@mustermann.de");
-        loginDTO.setPasswort("geheim");
-
-        Optional<Kunde> loggedIn = kundenRepository.findByEmail(loginDTO.getEmail());
-        assertThat(loggedIn).isPresent();
-        assertThat(loggedIn.get().getEmail()).isEqualTo(savedKunde.getEmail());
 
         List<Kunde> allKunden = kundenRepository.findAll();
         assertThat(allKunden).extracting("kundeId").contains(savedKunde.getKundeId());
