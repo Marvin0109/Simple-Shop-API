@@ -1,23 +1,27 @@
+-- Beispiel Daten für die DB
 
-TRUNCATE TABLE adresse, kunde, mitarbeiter, bestellung, bestellposition, produkt, kunde_hat_adressen RESTART IDENTITY CASCADE;
+-- Hinweis: Bei Passwörtern müssen die Daten vom Frontend aus gespeichert werden, sondern greift die Verschlüsselung
+-- nicht
+
+-- TRUNCATE TABLE adresse, kunde, mitarbeiter,
+--     bestellung, bestellposition, produkt, kunde_hat_adressen RESTART IDENTITY CASCADE;
 
 
-
-INSERT INTO adresse (aktiv, strasse, hausnummer, plz, ort, land) VALUES
-(true,  'Hauptstrasse',       '12',  10115, 'Berlin',    'Deutschland'),
-(true,  'Bahnhofweg',         '7a',  80331, 'Muenchen',  'Deutschland'),
-(true,  'Gartenallee',        '45',  50667, 'Koeln',     'Deutschland'),
-(true,  'Schulweg',           '3',   20095, 'Hamburg',   'Deutschland'),
-(true,  'Parkstrasse',        '88',  70173, 'Stuttgart', 'Deutschland'),
-(true,  'Lindenweg',          '19b', 28195, 'Bremen',    'Deutschland'),
-(true,  'Marktplatz',         '1',   01067, 'Dresden',   'Deutschland'),
-(true,  'Kirchweg',           '22',  99084, 'Erfurt',    'Deutschland'),
-(true,  'Feldstrasse',        '5',   34117, 'Kassel',    'Deutschland'),
-(true,  'Seestrasse',         '100', 78462, 'Konstanz',  'Deutschland'),
-(false,  'Universitätsstraße','1',   40225, 'Düsseldorf','Deutschland'),
-(false,  'Heinrichweg',       '22a', 92083, 'Koeln',     'Deutschland'),
-(false,  'Informatikweg',     '8b',  34217, 'Frankfurt', 'Deutschland'),
-(false,  'Dbstrasse',         '42',  78312, 'Dbburg',    'Deutschland');
+-- INSERT INTO adresse (aktiv, strasse, hausnummer, plz, ort, land) VALUES
+-- (true,  'Hauptstrasse',       '12',  10115, 'Berlin',    'Deutschland'),
+-- (true,  'Bahnhofweg',         '7a',  80331, 'Muenchen',  'Deutschland'),
+-- (true,  'Gartenallee',        '45',  50667, 'Koeln',     'Deutschland'),
+-- (true,  'Schulweg',           '3',   20095, 'Hamburg',   'Deutschland'),
+-- (true,  'Parkstrasse',        '88',  70173, 'Stuttgart', 'Deutschland'),
+-- (true,  'Lindenweg',          '19b', 28195, 'Bremen',    'Deutschland'),
+-- (true,  'Marktplatz',         '1',   01067, 'Dresden',   'Deutschland'),
+-- (true,  'Kirchweg',           '22',  99084, 'Erfurt',    'Deutschland'),
+-- (true,  'Feldstrasse',        '5',   34117, 'Kassel',    'Deutschland'),
+-- (true,  'Seestrasse',         '100', 78462, 'Konstanz',  'Deutschland'),
+-- (false,  'Universitätsstraße','1',   40225, 'Düsseldorf','Deutschland'),
+-- (false,  'Heinrichweg',       '22a', 92083, 'Koeln',     'Deutschland'),
+-- (false,  'Informatikweg',     '8b',  34217, 'Frankfurt', 'Deutschland'),
+-- (false,  'Dbstrasse',         '42',  78312, 'Dbburg',    'Deutschland');
 
 
 
