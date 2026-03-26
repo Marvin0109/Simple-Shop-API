@@ -5,8 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.repositories.MitarbeiterRepository;
@@ -15,17 +19,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestcontainerConfiguration.class)
+@Import({TestcontainerConfiguration.class, MitarbeiterContainerTest.TestConfig.class})
 @Sql(scripts = "/schema-test.sql")
-public class MitarbeiterContainerTest {
+class MitarbeiterContainerTest {
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+    }
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private MitarbeiterRepository repository;
 
     @BeforeEach
     void setup() {
-        repository = new MitarbeiterRepository(jdbcTemplate);
+        repository = new MitarbeiterRepository(jdbcTemplate, passwordEncoder);
     }
 
     @Test
@@ -37,7 +53,7 @@ public class MitarbeiterContainerTest {
         m.setNachname("Mustermann");
 
         // CREATE
-        Mitarbeiter saved = repository.createMitarbeiter(m);
+        Mitarbeiter saved = repository.save(m);
         assertThat(saved.getPersonalNr()).isNotNull();
 
         // FIND
@@ -45,8 +61,8 @@ public class MitarbeiterContainerTest {
         assertThat(found.getEmail()).isEqualTo("max@mustermann.de");
 
         // DELETE
-        boolean deleted = repository.deleteById(saved.getPersonalNr());
-        assertThat(deleted).isTrue();
+        int deleted = repository.deleteById(saved.getPersonalNr());
+        assertThat(deleted).isOne();
 
         assertThat(repository.findById(saved.getPersonalNr())).isEmpty();
     }

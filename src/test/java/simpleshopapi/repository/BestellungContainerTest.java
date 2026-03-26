@@ -53,7 +53,7 @@ class BestellungContainerTest {
     void setup(){
         bestellungRepository = new BestellungRepository(jdbcTemplate);
         kundenRepository = new KundenRepository(jdbcTemplate, passwordEncoder);
-        mitarbeiterRepository = new MitarbeiterRepository(jdbcTemplate);
+        mitarbeiterRepository = new MitarbeiterRepository(jdbcTemplate, passwordEncoder);
         produktRepository = new ProduktRepository(jdbcTemplate);
         bestellpositionenRepository = new BestellpositionenRepository(jdbcTemplate);
     }
@@ -72,7 +72,7 @@ class BestellungContainerTest {
         mitarbeiter.setVorname("Anna");
         mitarbeiter.setNachname("Muster");
         mitarbeiter.setPasswort("pass123");
-        mitarbeiterRepository.createMitarbeiter(mitarbeiter);
+        mitarbeiterRepository.save(mitarbeiter);
 
         Produkt produkt = new Produkt();
         produkt.setSku("SKU-0000");

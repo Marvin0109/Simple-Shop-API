@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import simpleshopapi.dto.LoadKundeDTO;
 import simpleshopapi.dto.KundeLoginDTO;
+import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.dto.MitarbeiterLoginDTO;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +33,15 @@ public class LoginController {
                                               BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
         }
 
-        Mitarbeiter mitarbeiter = service.loginMitarbeiter(mitarbeiterLogin);
+        LoadMitarbeiterDTO mitarbeiter = service.loginMitarbeiter(mitarbeiterLogin);
         return ResponseEntity.ok(mitarbeiter);
     }
 
@@ -47,10 +50,12 @@ public class LoginController {
                                         BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
         }
 
         LoadKundeDTO kunde = service.loginKunde(kundeLogin);
