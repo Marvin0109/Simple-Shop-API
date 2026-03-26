@@ -12,6 +12,7 @@ import simpleshopapi.dto.MitarbeiterLoginDTO;
 import simpleshopapi.repositories.KundenRepository;
 import simpleshopapi.repositories.MitarbeiterRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,7 +58,8 @@ public class LoginService {
                 k.getKundeId(),
                 k.getEmail(),
                 k.getVorname(),
-                k.getNachname()
+                k.getNachname(),
+                List.of()
         );
     }
 }
