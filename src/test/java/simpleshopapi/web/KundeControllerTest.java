@@ -7,11 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.KundenController;
+import simpleshopapi.dto.LoadKundeDTO;
 import simpleshopapi.exception.NotFoundException;
 import simpleshopapi.model.Kunde;
 import simpleshopapi.service.KundenService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,9 +33,12 @@ class KundeControllerTest {
 
     @Test
     void getKunden() throws Exception {
-        Kunde k = new Kunde();
-        k.setKundeId(1);
-        k.setVorname("Max");
+        LoadKundeDTO k = new LoadKundeDTO(
+                1,
+                "",
+                "Max",
+                ""
+        );
 
         when(service.findAll()).thenReturn(List.of(k));
 
@@ -41,54 +46,64 @@ class KundeControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$[0].kundeId").value(1))
-            .andExpect(jsonPath("$[0].vorname").value("Max"));
+            .andExpect(jsonPath("$[0].vorname").value("Max"))
+            .andExpect(jsonPath("$[0].passwort").doesNotExist());
     }
 
     @Test
     void getKunden_withId() throws Exception {
-        Kunde k = new Kunde();
-        k.setKundeId(1);
-        k.setVorname("Max");
+        LoadKundeDTO k = new LoadKundeDTO(
+                1,
+                "",
+                "Max",
+                ""
+        );
 
-        when(service.findById(1)).thenReturn(k);
+        when(service.findById(1)).thenReturn(Optional.of(k));
 
-        mvc.perform(get("/kunden")
-                .param("id", "1"))
+        mvc.perform(get("/kunden/id/{id}", 1))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.kundeId").value(1))
-            .andExpect(jsonPath("$.vorname").value("Max"));
+            .andExpect(jsonPath("$.vorname").value("Max"))
+            .andExpect(jsonPath("$.passwort").doesNotExist());
     }
 
     @Test
     void getKunden_withEmail() throws Exception {
-        Kunde k = new Kunde();
-        k.setKundeId(1);
-        k.setEmail("test@test.de");
+        LoadKundeDTO k = new LoadKundeDTO(
+                1,
+                "test@test.de",
+                "",
+                ""
+        );
 
-        when(service.findByEmail("test@test.de")).thenReturn(k);
+        when(service.findByEmail("test@test.de")).thenReturn(Optional.of(k));
 
-        mvc.perform(get("/kunden").param("email", "test@test.de"))
+        mvc.perform(get("/kunden/email/{email}", "test@test.de"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.kundeId").value(1))
-            .andExpect(jsonPath("$.email").value("test@test.de"));
+            .andExpect(jsonPath("$.email").value("test@test.de"))
+            .andExpect(jsonPath("$.passwort").doesNotExist());
     }
 
     @Test
     void getKunden_notFound() throws Exception {
         when(service.findById(99)).thenThrow(new NotFoundException("Kunde with id " + 99 + " not found!"));
 
-        mvc.perform(get("/kunden")
-                .param("id", "99"))
+        mvc.perform(get("/kunden/id/{id}", 99))
             .andExpect(status().isNotFound());
     }
 
     @Test
     void createKunden_returnsCreated() throws Exception {
-        Kunde saved = new Kunde();
-        saved.setKundeId(1);
-        saved.setVorname("Peter");
+        LoadKundeDTO saved = new LoadKundeDTO(
+                1,
+                "",
+                "Peter",
+                ""
+        );
 
         when(service.create(any(Kunde.class))).thenReturn(saved);
 
@@ -105,12 +120,12 @@ class KundeControllerTest {
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.kundeId").value(1))
-            .andExpect(jsonPath("$.vorname").value("Peter"));
+            .andExpect(jsonPath("$.vorname").value("Peter"))
+            .andExpect(jsonPath("$.passwort").doesNotExist());
     }
 
     @Test
     void createKunden_returnsBadRequest() throws Exception {
-
         mvc.perform(post("/kunden")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -130,10 +145,7 @@ class KundeControllerTest {
         k.setKundeId(1);
         k.setVorname("Peter");
 
-        when(service.update(eq(1), any(Kunde.class))).thenReturn(k);
-
-        mvc.perform(put("/kunden")
-                    .param("id", "1")
+        mvc.perform(put("/kunden/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {
@@ -141,26 +153,7 @@ class KundeControllerTest {
                         "vorname": "Peter"
                     }
                 """))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.kundeId").value(1))
-            .andExpect(jsonPath("$.vorname").value("Peter"));
-    }
-
-    @Test
-    void updateKunde_idMismatch() throws Exception {
-        doThrow(new IllegalArgumentException("Kunden-ID im Pfad und Body müssen übereinstimmen!"))
-            .when(service).update(eq(1), any(Kunde.class));
-
-        mvc.perform(put("/kunden")
-                    .param("id", "1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                    {
-                        "kundeId": 2,
-                        "vorname": "Peter"
-                    }
-                """))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isNoContent());
     }
 
     @Test
@@ -168,8 +161,7 @@ class KundeControllerTest {
         doThrow(new NotFoundException("Kunde with id " + 99 + " not found!"))
                 .when(service).update(eq(99), any(Kunde.class));
 
-        mvc.perform(put("/kunden")
-                    .param("id", "99")
+        mvc.perform(put("/kunden/{id}", 99)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                     {

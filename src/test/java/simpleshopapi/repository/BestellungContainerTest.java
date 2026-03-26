@@ -5,8 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.jdbc.Sql;
 import simpleshopapi.model.*;
 import simpleshopapi.repositories.*;
@@ -21,12 +25,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestcontainerConfiguration.class)
+@Import({TestcontainerConfiguration.class, BestellungContainerTest.TestConfig.class})
 @Sql("/schema-test.sql")
-public class BestellungContainerTest {
+class BestellungContainerTest {
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        PasswordEncoder passwordEncoder() {
+            return new BCryptPasswordEncoder();
+        }
+    }
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     private BestellungRepository bestellungRepository;
     private KundenRepository kundenRepository;
     private MitarbeiterRepository mitarbeiterRepository;
@@ -36,7 +52,7 @@ public class BestellungContainerTest {
     @BeforeEach
     void setup(){
         bestellungRepository = new BestellungRepository(jdbcTemplate);
-        kundenRepository = new KundenRepository(jdbcTemplate);
+        kundenRepository = new KundenRepository(jdbcTemplate, passwordEncoder);
         mitarbeiterRepository = new MitarbeiterRepository(jdbcTemplate);
         produktRepository = new ProduktRepository(jdbcTemplate);
         bestellpositionenRepository = new BestellpositionenRepository(jdbcTemplate);
@@ -49,7 +65,7 @@ public class BestellungContainerTest {
         kunde.setVorname("Max");
         kunde.setNachname("Mustermann");
         kunde.setPasswort("pass123");
-        kundenRepository.createKunde(kunde);
+        kundenRepository.save(kunde);
 
         Mitarbeiter mitarbeiter = new Mitarbeiter();
         mitarbeiter.setEmail("ma@test.de");

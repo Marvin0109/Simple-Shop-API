@@ -1,9 +1,9 @@
 package simpleshopapi.repositories;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import simpleshopapi.model.Adresse;
 import simpleshopapi.dto.AdresseMitTypDTO;
 import simpleshopapi.model.Kunde;
-import simpleshopapi.dto.KundeLoginDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
@@ -15,34 +15,17 @@ import java.util.*;
 @Repository
 public class KundenRepository {
 
+    private final PasswordEncoder passwordEncoder;
     private final JdbcTemplate jdbcTemplate;
 
-    public KundenRepository(JdbcTemplate jdbcTemplate) {
+    public KundenRepository(JdbcTemplate jdbcTemplate, PasswordEncoder passwordEncoder) {
         this.jdbcTemplate = jdbcTemplate;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Kunde> findAll() {
-    String sql =
-        """
-        SELECT
-            k.kunde_id,
-            k.email,
-            k.vorname,
-            k.nachname,
-            k.passwort,
-            a.adresse_id,
-            a.aktiv,
-            a.strasse,
-            a.hausnummer,
-            a.plz,
-            a.ort,
-            a.land,
-            kha.typ
-        FROM kunde k
-        JOIN kunde_hat_adressen kha ON kha.kunde_id = k.kunde_id
-        JOIN adresse a ON a.adresse_id = kha.adresse_id
-        ORDER BY k.kunde_id
-        """;
+        String sql = BASE_SELECT + " ORDER BY k.kunde_id";
+
         return jdbcTemplate.query(sql, (ResultSetExtractor<List<Kunde>>) rs -> {
 
             Map<Integer, Kunde> kundeMap = new LinkedHashMap<>();
@@ -71,90 +54,16 @@ public class KundenRepository {
     }
 
     public Optional<Kunde> findById(Integer id) {
-        String sql = """
-        SELECT
-            k.kunde_id,
-            k.email,
-            k.vorname,
-            k.nachname,
-            k.passwort,
-            a.adresse_id,
-            a.aktiv,
-            a.strasse,
-            a.hausnummer,
-            a.plz,
-            a.ort,
-            a.land,
-            kha.typ
-        FROM kunde k
-        JOIN kunde_hat_adressen kha ON kha.kunde_id = k.kunde_id
-        JOIN adresse a ON a.adresse_id = kha.adresse_id
-        WHERE k.kunde_id = ?
-        ORDER BY a.adresse_id
-        """;
-
-        return jdbcTemplate.query(sql, (ResultSet rs) -> {
-            Kunde kunde = null;
-
-            while (rs.next()) {
-                if (kunde == null) {
-                    kunde = new Kunde();
-                    kunde.setKundeId(rs.getInt("kunde_id"));
-                    kunde.setEmail(rs.getString("email"));
-                    kunde.setVorname(rs.getString("vorname"));
-                    kunde.setNachname(rs.getString("nachname"));
-                    kunde.setPasswort(rs.getString("passwort"));
-                }
-                adressenForKunde(rs, kunde);
-            }
-
-            return Optional.ofNullable(kunde);
-        }, id);
+        return querySingleKunde(BASE_SELECT + " WHERE k.kunde_id = ? ORDER BY a.adresse_id", id);
     }
 
     public Optional<Kunde> findByEmail(String email) {
-        String sql = """
-        SELECT
-            k.kunde_id,
-            k.email,
-            k.vorname,
-            k.nachname,
-            k.passwort,
-            a.adresse_id,
-            a.aktiv,
-            a.strasse,
-            a.hausnummer,
-            a.plz,
-            a.ort,
-            a.land,
-            kha.typ
-        FROM kunde k
-        JOIN kunde_hat_adressen kha ON kha.kunde_id = k.kunde_id
-        JOIN adresse a ON a.adresse_id = kha.adresse_id
-        WHERE k.email = ?
-        ORDER BY a.adresse_id
-        """;
-
-        return jdbcTemplate.query(sql, (ResultSet rs) -> {
-            Kunde kunde = null;
-
-            while (rs.next()) {
-                if (kunde == null) {
-                    kunde = new Kunde();
-                    kunde.setKundeId(rs.getInt("kunde_id"));
-                    kunde.setEmail(rs.getString("email"));
-                    kunde.setVorname(rs.getString("vorname"));
-                    kunde.setNachname(rs.getString("nachname"));
-                    kunde.setPasswort(rs.getString("passwort"));
-                }
-                adressenForKunde(rs, kunde);
-            }
-
-            return Optional.ofNullable(kunde);
-        }, email);
+        return querySingleKunde(BASE_SELECT + " WHERE k.email = ? ORDER BY a.adresse_id", email);
     }
 
-    public Kunde createKunde(Kunde kunde) {
+    public Kunde save(Kunde kunde) {
+        String hashedPassword = passwordEncoder.encode(kunde.getPasswort());
+
         String sql = "INSERT INTO kunde (email, vorname, nachname, passwort) " +
                 "VALUES (?, ?, ?, ?) RETURNING kunde_id";
 
@@ -164,14 +73,11 @@ public class KundenRepository {
                 kunde.getEmail(),
                 kunde.getVorname(),
                 kunde.getNachname(),
-                kunde.getPasswort()
+                hashedPassword
         );
 
-        if (id != null) {
-            kunde.setKundeId(id);
-        } else {
-            throw new RuntimeException("Kunde id is null");
-        }
+        kunde.setKundeId(Objects.requireNonNull(id));
+        kunde.setPasswort(null);
         return kunde;
     }
 
@@ -185,38 +91,25 @@ public class KundenRepository {
         WHERE kunde_id = ?
         """;
 
+        String hashed = passwordEncoder.encode(kunde.getPasswort());
+
         return jdbcTemplate.update(
             sql,
             kunde.getEmail(),
             kunde.getVorname(),
             kunde.getNachname(),
-            kunde.getPasswort(),
+            hashed,
             kunde.getKundeId()
         );
     }
 
-    public Kunde login(KundeLoginDTO kundeLogin) {
-        String sql = "SELECT * FROM kunde WHERE email = ? AND passwort = ?";
-
-        List<Kunde> kundenListe = jdbcTemplate.query(
-                sql,
-                (rs, rowNum) -> {
-                    Kunde kunde = new Kunde();
-                    kunde.setKundeId(rs.getInt("kunde_id"));
-                    kunde.setEmail(rs.getString("email"));
-                    kunde.setVorname(rs.getString("vorname"));
-                    kunde.setNachname(rs.getString("nachname"));
-                    kunde.setPasswort(null);
-                    return kunde;
-                },
-                kundeLogin.getEmail(),
-                kundeLogin.getPasswort()
-        );
-
-        return kundenListe.isEmpty() ? new Kunde() : kundenListe.get(0);
-    }
-
     private void adressenForKunde(ResultSet rs, Kunde kunde) throws SQLException {
+        Integer adresseId = rs.getObject("adresse_id", Integer.class);
+
+        if (adresseId == null) {
+            return;
+        }
+
         Adresse adresse = new Adresse();
         adresse.setAdresseId(rs.getInt("adresse_id"));
         adresse.setAktiv(rs.getBoolean("aktiv"));
@@ -233,4 +126,44 @@ public class KundenRepository {
         kunde.getAdressen().add(amt);
     }
 
+    private Optional<Kunde> querySingleKunde(String sql, Object param) {
+        return jdbcTemplate.query(sql, rs -> {
+            Kunde kunde = null;
+
+            while (rs.next()) {
+                if (kunde == null) {
+                    kunde = new Kunde();
+                    kunde.setKundeId(rs.getInt("kunde_id"));
+                    kunde.setEmail(rs.getString("email"));
+                    kunde.setVorname(rs.getString("vorname"));
+                    kunde.setNachname(rs.getString("nachname"));
+                    kunde.setPasswort(rs.getString("passwort"));
+                }
+
+                adressenForKunde(rs, kunde);
+            }
+
+            return Optional.ofNullable(kunde);
+        }, param);
+    }
+
+    private static final String BASE_SELECT = """
+        SELECT
+            k.kunde_id,
+            k.email,
+            k.vorname,
+            k.nachname,
+            k.passwort,
+            a.adresse_id,
+            a.aktiv,
+            a.strasse,
+            a.hausnummer,
+            a.plz,
+            a.ort,
+            a.land,
+            kha.typ
+        FROM kunde k
+        LEFT JOIN kunde_hat_adressen kha ON kha.kunde_id = k.kunde_id
+        LEFT JOIN adresse a ON a.adresse_id = kha.adresse_id
+        """;
 }

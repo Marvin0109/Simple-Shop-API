@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import simpleshopapi.controller.LoginController;
+import simpleshopapi.dto.LoadKundeDTO;
 import simpleshopapi.exception.UnauthorizedException;
-import simpleshopapi.model.Kunde;
 import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.dto.MitarbeiterLoginDTO;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LoginController.class)
-public class LoginControllerTest {
+class LoginControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -82,9 +82,12 @@ public class LoginControllerTest {
 
     @Test
     void loginKunde_success_returns200() throws Exception {
-        Kunde k = new Kunde();
-        k.setKundeId(1);
-        k.setVorname("Anna");
+        LoadKundeDTO k = new LoadKundeDTO(
+                1,
+                "",
+                "Anna",
+                ""
+        );
 
         when(service.loginKunde(any(KundeLoginDTO.class))).thenReturn(k);
 
