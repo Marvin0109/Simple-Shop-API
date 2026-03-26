@@ -15,7 +15,7 @@ CREATE TABLE kunde (
     email           VARCHAR(256) NOT NULL,
     vorname         VARCHAR(32) NOT NULL,
     nachname        VARCHAR(32) NOT NULL,
-    passwort        VARCHAR(20) NOT NULL
+    passwort        VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE kunde_hat_adressen (
@@ -32,7 +32,7 @@ CREATE TABLE mitarbeiter (
     vorname         TEXT NOT NULL,
     nachname        TEXT NOT NULL,
     email           TEXT NOT NULL,
-    passwort        VARCHAR(20) NOT NULL
+    passwort        VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE bestellung (

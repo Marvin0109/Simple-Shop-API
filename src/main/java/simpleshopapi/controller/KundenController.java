@@ -3,12 +3,12 @@ package simpleshopapi.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import simpleshopapi.dto.LoadKundeDTO;
 import simpleshopapi.model.Kunde;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.KundenService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,42 +22,50 @@ public class KundenController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getKunden(
-            @RequestParam(required = false) Integer id,
-            @RequestParam(required = false) String email) {
-
-        if (id != null) {
-            return ResponseEntity.ok(service.findById(id));
-        }
-
-        if (email != null) {
-            return ResponseEntity.ok(service.findByEmail(email));
-        }
-
+    public ResponseEntity<List<LoadKundeDTO>> getAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @PostMapping
-    public ResponseEntity<?> createKunden(@Valid @RequestBody Kunde kunde,
-                                              BindingResult bindingResult) {
-
-        if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-        }
-
-        Kunde saved = service.create(kunde);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    @GetMapping("/id/{id}")
+    public ResponseEntity<LoadKundeDTO> getById(@PathVariable Integer id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping
+    @GetMapping("/email/{email}")
+    public ResponseEntity<LoadKundeDTO> getByEmail(@PathVariable String email) {
+        return service.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createKunden(
+            @Valid @RequestBody Kunde kunde,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        LoadKundeDTO saved = service.create(kunde);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateKunde(
-            @RequestParam Integer id,
+            @PathVariable Integer id,
             @RequestBody Kunde kunde) {
 
-        Kunde updated = service.update(id, kunde);
-        return ResponseEntity.ok(updated);
+        service.update(id, kunde);
+        return ResponseEntity.noContent().build();
     }
 }

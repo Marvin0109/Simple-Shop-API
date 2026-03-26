@@ -3,7 +3,7 @@ package simpleshopapi.controller;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import simpleshopapi.model.Kunde;
+import simpleshopapi.dto.LoadKundeDTO;
 import simpleshopapi.dto.KundeLoginDTO;
 import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.dto.MitarbeiterLoginDTO;
@@ -53,7 +53,7 @@ public class LoginController {
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
 
-        Kunde kunde = service.loginKunde(kundeLogin);
+        LoadKundeDTO kunde = service.loginKunde(kundeLogin);
         return ResponseEntity.ok(kunde);
     }
 }

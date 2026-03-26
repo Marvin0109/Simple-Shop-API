@@ -15,11 +15,7 @@ CREATE TABLE IF NOT EXISTS kunde (
     email           VARCHAR(256) NOT NULL UNIQUE CHECK (email ~ '^[^@]+@[^@]+\.[^@]+$'),
     vorname         VARCHAR(32) NOT NULL CHECK (vorname ~ '^[A-ZÄÖÜ][a-zäöüß]*$'),
     nachname        VARCHAR(32) NOT NULL CHECK (nachname ~ '^[A-ZÄÖÜ][a-zäöüß]*$'),
-    passwort        VARCHAR(20) NOT NULL
-        CHECK(LENGTH(passwort) BETWEEN 5 AND 20)
-        CHECK(passwort ~ '[A-Za-z]')
-        CHECK(passwort ~ '[0-9]')
-        CHECK(passwort ~ '[^A-Za-z0-9]')
+    passwort        VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS kunde_hat_adressen (
@@ -36,11 +32,7 @@ CREATE TABLE IF NOT EXISTS mitarbeiter (
     vorname         TEXT NOT NULL,
     nachname        TEXT NOT NULL,
     email           TEXT NOT NULL,
-    passwort        VARCHAR(20) NOT NULL
-        CHECK(LENGTH(passwort) BETWEEN 5 AND 20)
-        CHECK(passwort ~ '[A-Za-z]')
-        CHECK(passwort ~ '[0-9]')
-        CHECK(passwort ~ '[^A-Za-z0-9]')
+    passwort        VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS bestellung (

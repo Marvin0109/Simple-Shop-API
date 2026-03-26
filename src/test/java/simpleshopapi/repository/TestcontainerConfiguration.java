@@ -11,12 +11,12 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration
 public class TestcontainerConfiguration {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(TestcontainerConfiguration.class);
+    private final Logger logger = LoggerFactory.getLogger(TestcontainerConfiguration.class);
 
     @Bean
     @ServiceConnection
     PostgreSQLContainer<?> postgreContainer() {
-        LOGGER.warn("Verwende Testcontainer");
+        logger.warn("Verwende Testcontainer");
         return new PostgreSQLContainer<>(DockerImageName.parse("postgres:17.7"));
     }
 
