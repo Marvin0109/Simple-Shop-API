@@ -59,7 +59,8 @@ public class KundenService {
                 kunde.getKundeId(),
                 kunde.getEmail(),
                 kunde.getVorname(),
-                kunde.getNachname()
+                kunde.getNachname(),
+                kunde.getAdressen()
         );
     }
 }

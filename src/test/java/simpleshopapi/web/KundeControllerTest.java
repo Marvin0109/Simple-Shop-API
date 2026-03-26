@@ -37,7 +37,8 @@ class KundeControllerTest {
                 1,
                 "",
                 "Max",
-                ""
+                "",
+                List.of()
         );
 
         when(service.findAll()).thenReturn(List.of(k));
@@ -56,7 +57,8 @@ class KundeControllerTest {
                 1,
                 "",
                 "Max",
-                ""
+                "",
+                List.of()
         );
 
         when(service.findById(1)).thenReturn(Optional.of(k));
@@ -75,7 +77,8 @@ class KundeControllerTest {
                 1,
                 "test@test.de",
                 "",
-                ""
+                "",
+                List.of()
         );
 
         when(service.findByEmail("test@test.de")).thenReturn(Optional.of(k));
@@ -102,7 +105,8 @@ class KundeControllerTest {
                 1,
                 "",
                 "Peter",
-                ""
+                "",
+                List.of()
         );
 
         when(service.create(any(Kunde.class))).thenReturn(saved);

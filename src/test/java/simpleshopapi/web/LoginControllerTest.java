@@ -11,11 +11,10 @@ import simpleshopapi.dto.LoadKundeDTO;
 import simpleshopapi.dto.LoadMitarbeiterDTO;
 import simpleshopapi.exception.UnauthorizedException;
 import simpleshopapi.dto.KundeLoginDTO;
-import simpleshopapi.model.Mitarbeiter;
 import simpleshopapi.dto.MitarbeiterLoginDTO;
 import simpleshopapi.service.LoginService;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -93,7 +92,8 @@ class LoginControllerTest {
                 1,
                 "",
                 "Anna",
-                ""
+                "",
+                List.of()
         );
 
         when(service.loginKunde(any(KundeLoginDTO.class))).thenReturn(k);
