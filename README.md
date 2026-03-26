@@ -6,8 +6,10 @@
 
 SIMPLE-SHOP-API ist eine simple REST-API Anwendung, die im Modul *Datenbanken: Weiterführende Konzepte*
 als 2-wöchige Abschlussprüfung implementiert werden musste. Sie verwendet **PostgreSQL** als Datenbank
-und bietet grundlegende Funktionen für ein einfaches Shop-System an. Seit der Abgabe wurde die Anwendung
-verbessert in Aspekten wie **Endpoints** und **Passwort-Speicherung**.
+und bietet grundlegende Funktionen für ein einfaches Shop-System an. 
+
+Seit der Abgabe wurde die Anwendung
+verbessert in Aspekten wie **Testing**, **Endpoints** und **Passwort-Speicherung**.
 
 > [!NOTE]
 > Die Anwendung unterläuft grad einiger Verbesserungen und Fixes, mehr Details dazu in [To-do](TODO.md).
@@ -91,11 +93,26 @@ $ ./clean.sh --help # Anzeige von Optionen
 
 ## Nutzung
 
-Folgende Screenshots zeigen das Testen der Endpoints mit **Swagger-UI**.
+> [!NOTE]
+> Folgende Screenshots zeigen das Testen der Endpoints mit **Swagger-UI** der Anwendung vom Stand **26.03.26**.
+
+### Kunden anlegen
+
+![Kunden anlegen](src/main/resources/demo/saveKunde.png)
+
+### Kunden anzeigen
+
+![Kundendaten anzeigen](src/main/resources/demo/getKunden.png)
+
+### Kunden Login
+
+![Kundenlogin erfolgreich](src/main/resources/demo/loginKundeSuccess.png)
+
+Für invalide Logins sowie weitere Demos siehe [hier](src/main/resources/demo).
 
 ## Literatur
 
-Das dieses Projekt ein Abschlussprojekt war, gab es vom Dozenten ein Dokument mit Installationsanweisungen,
+Da dieses Projekt ein Abschlussprojekt war, gab es vom Dozenten ein Dokument mit Installationsanweisungen,
 Anforderungen, Endpoints, Datenbankaufbau usw.
 Dieses Dokument ist [hier](src/main/resources/docs/DBSW_WISE2526_Abschlussprojekt_Aufgaben.pdf) verlinkt.
 
