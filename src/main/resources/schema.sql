@@ -3,18 +3,18 @@
 CREATE TABLE IF NOT EXISTS adresse (
     adresse_id      INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     aktiv           BOOLEAN NOT NULL,
-    strasse         VARCHAR(60) NOT NULL CHECK (strasse ~ '^[A-ZÄÖÜ][a-zäöüß]*$'),
-    hausnummer      VARCHAR(5) NOT NULL CHECK (hausnummer ~ '^[0-9]+[a-z]?$'),
-    plz             VARCHAR(12) NOT NULL CHECK (plz ~ '^[0-9]{1,12}$'),
+    strasse         VARCHAR(60) NOT NULL,
+    hausnummer      VARCHAR(5) NOT NULL,
+    plz             VARCHAR(12) NOT NULL,
     ort             TEXT NOT NULL,
     land            TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS kunde (
     kunde_id        INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    email           VARCHAR(256) NOT NULL UNIQUE CHECK (email ~ '^[^@]+@[^@]+\.[^@]+$'),
-    vorname         VARCHAR(32) NOT NULL CHECK (vorname ~ '^[A-ZÄÖÜ][a-zäöüß]*$'),
-    nachname        VARCHAR(32) NOT NULL CHECK (nachname ~ '^[A-ZÄÖÜ][a-zäöüß]*$'),
+    email           VARCHAR(256) NOT NULL UNIQUE,
+    vorname         VARCHAR(32) NOT NULL,
+    nachname        VARCHAR(32) NOT NULL,
     passwort        VARCHAR(255) NOT NULL
 );
 
@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS kunde_hat_adressen (
     kunde_id        INT NOT NULL,
     typ             TEXT NOT NULL CHECK(typ IN ('Lieferadresse', 'Rechnungsadresse')),
     PRIMARY KEY (adresse_id, kunde_id),
-    FOREIGN KEY (adresse_id) REFERENCES adresse(adresse_id),
-    FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id)
+    FOREIGN KEY (adresse_id) REFERENCES adresse(adresse_id) ON DELETE CASCADE,
+    FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS mitarbeiter (
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS produkt (
     sku             TEXT NOT NULL UNIQUE PRIMARY KEY,
     name            TEXT NOT NULL,
     preis           DECIMAL(10, 2) NOT NULL,
-    lagerbestand    INT NOT NULL CHECK(lagerbestand >= 0),
+    lagerbestand    INT NOT NULL CHECK (lagerbestand >= 0),
     angelegt_von    INT NOT NULL,
     FOREIGN KEY (angelegt_von) REFERENCES mitarbeiter(personal_nr)
 );
@@ -337,6 +337,3 @@ LEFT JOIN (
 ORDER BY
     m.personal_nr,
     s.status;
-
-
-
