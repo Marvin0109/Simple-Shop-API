@@ -1,16 +1,43 @@
 #!/bin/bash
 
-echo "Stoppe Docker-Container..."
-docker compose down
+# Flags
+REMOVE_VOLUMES=false
 
-echo "Optional: Volumes löschen, um die Datenbank komplett zurückzusetzen..."
-read -p "Möchtest du die Datenbankdaten löschen? (y/n) " confirm
+# Help
+function show_help() {
+  echo "Usage: $0 [options]"
+  echo
+  echo "Options:"
+  echo "  --help        Display options"
+  echo "  --reset       Reset database (deleting volumes)"
+  exit 0
+}
 
-if [[ "$confirm" == "y" || "$confirm" == "Y" ]]; then
+for arg in "$@"; do
+  case $arg in
+    --help)
+      show_help
+      ;;
+    --reset)
+      REMOVE_VOLUMES=true
+      shift
+      ;;
+    *)
+      echo "Unknown flag: $arg"
+      echo "Try using --help for options"
+      exit 1
+      ;;
+  esac
+done
+
+echo "Stopping container..."
+
+if $REMOVE_VOLUMES; then
     docker compose down -v
-    echo "Volumes wurden gelöscht."
+    echo "Container down and volumes deleted."
 else
-    echo "Volumes bleiben erhalten."
+    docker compose down
+    echo "Container down. Volumes remain."
 fi
 
-echo "Cleanup fertig."
+echo "Cleanup finished."
