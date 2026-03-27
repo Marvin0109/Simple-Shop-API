@@ -2,6 +2,7 @@
 
 # Flags
 REMOVE_VOLUMES=false
+REMOVE_JAR=false
 
 # Help
 function show_help() {
@@ -10,6 +11,7 @@ function show_help() {
   echo "Options:"
   echo "  --help        Display options"
   echo "  --reset       Reset database (deleting volumes)"
+  echo "  --remove      Remove built files"
   exit 0
 }
 
@@ -20,6 +22,10 @@ for arg in "$@"; do
       ;;
     --reset)
       REMOVE_VOLUMES=true
+      shift
+      ;;
+    --remove)
+      REMOVE_JAR=true
       shift
       ;;
     *)
@@ -33,11 +39,16 @@ done
 echo "Stopping container..."
 
 if $REMOVE_VOLUMES; then
-    docker compose down -v
-    echo "Container down and volumes deleted."
+  docker compose down -v
+  echo "Container down and volumes deleted."
 else
     docker compose down
     echo "Container down. Volumes remain."
+fi
+
+if $REMOVE_JAR; then
+  echo "Removing built files..."
+  mvn clean
 fi
 
 echo "Cleanup finished."
