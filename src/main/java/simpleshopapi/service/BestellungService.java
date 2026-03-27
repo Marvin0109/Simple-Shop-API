@@ -6,6 +6,7 @@ import simpleshopapi.model.Bestellung;
 import simpleshopapi.repositories.BestellungRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BestellungService {
@@ -20,18 +21,17 @@ public class BestellungService {
         return repository.findAll();
     }
 
-    public Bestellung findById(Integer id) {
-        return repository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Bestellung with id " + id + " not found!"));
+    public Optional<Bestellung> findById(Integer id) {
+        return repository.findById(id);
     }
 
     public Bestellung create(Bestellung bestellung) {
-        return repository.createBestellung(bestellung);
+        return repository.save(bestellung);
     }
 
     public void delete(Integer id) {
-        boolean deleted = repository.deleteById(id);
-        if (!deleted) {
+        int deleted = repository.deleteById(id);
+        if (deleted == 0) {
             throw new NotFoundException("Bestellung with id " + id +  " not found!");
         }
     }

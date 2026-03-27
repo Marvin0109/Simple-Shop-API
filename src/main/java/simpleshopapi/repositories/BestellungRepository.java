@@ -20,30 +20,9 @@ public class BestellungRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public ArrayList<Bestellung> findAll() {
-        String sql = """
-        SELECT
-            b.bestellung_id AS bestellung_id,
-            b.kunde_id AS kunde_id,
-            b.mitarbeiterzuweis AS mitarbeiterzuweis,
-            b.datum AS datum,
-            b.status AS status,
-            bp.bestellung_id AS bestellung_id,
-            bp.position_id AS position_id,
-            p.sku AS sku,
-            p.name AS name,
-            p.preis AS preis,
-            p.lagerbestand AS lagerbestand,
-            p.angelegt_von AS angelegt_von,
-            bp.menge AS menge,
-            bp.menge * p.preis AS gesamtpreis
-        FROM bestellung b
-        JOIN bestellposition bp ON bp.bestellung_id = b.bestellung_id
-        JOIN produkt p ON bp.sku = p.sku
-        """;
-
+    public List<Bestellung> findAll() {
         return jdbcTemplate.query(
-            sql,
+                BASE_SELECT,
             rs -> {
             Map<Integer, Bestellung> bestellungen = new LinkedHashMap<>();
 
@@ -75,30 +54,8 @@ public class BestellungRepository {
     }
 
     public Optional<Bestellung> findById(int bestellungId) {
-        String sql = """
-        SELECT
-            b.bestellung_id AS bestellung_id,
-            b.kunde_id AS kunde_id,
-            b.mitarbeiterzuweis AS mitarbeiterzuweis,
-            b.datum AS datum,
-            b.status AS status,
-            bp.bestellung_id AS bestellung_id,
-            bp.position_id AS position_id,
-            p.sku AS sku,
-            p.name AS name,
-            p.preis AS preis,
-            p.lagerbestand AS lagerbestand,
-            p.angelegt_von AS angelegt_von,
-            bp.menge AS menge,
-            bp.menge * p.preis AS gesamtpreis
-        FROM bestellung b
-        JOIN bestellposition bp ON bp.bestellung_id = b.bestellung_id
-        JOIN produkt p ON bp.sku = p.sku
-        WHERE b.bestellung_id = ?
-        """;
-
         return jdbcTemplate.query(
-            sql,
+            BASE_SELECT + " WHERE b.bestellung_id = ?",
             rs -> {
                 Bestellung bestellung = null;
                 while (rs.next()) {
@@ -123,7 +80,7 @@ public class BestellungRepository {
             }, bestellungId);
     }
 
-    public Bestellung createBestellung(Bestellung bestellung) {
+    public Bestellung save(Bestellung bestellung) {
         String sql = "INSERT INTO bestellung (datum, status, mitarbeiterzuweis, kunde_id) " +
                 "VALUES (?, ?, ?, ?) RETURNING bestellung_id";
 
@@ -136,17 +93,13 @@ public class BestellungRepository {
             bestellung.getKundeId()
         );
 
-        if (id != null) {
-            bestellung.setBestellungId(id);
-        } else {
-            throw new RuntimeException("Bestellung id is null");
-        }
+        bestellung.setBestellungId(Objects.requireNonNull(id));
         return bestellung;
     }
 
-    public boolean deleteById(int bestellungId) {
+    public int deleteById(int bestellungId) {
         String sql = "DELETE FROM bestellung WHERE bestellung_id = ?";
-        return jdbcTemplate.update(sql, bestellungId) > 0;
+        return jdbcTemplate.update(sql, bestellungId);
     }
 
     private void produkteForBestellungen(ResultSet rs, Bestellung bestellung) throws SQLException {
@@ -166,5 +119,26 @@ public class BestellungRepository {
 
         bestellung.getPositionen().add(pos);
     }
+
+    private static final String BASE_SELECT = """
+        SELECT
+            b.bestellung_id AS bestellung_id,
+            b.kunde_id AS kunde_id,
+            b.mitarbeiterzuweis AS mitarbeiterzuweis,
+            b.datum AS datum,
+            b.status AS status,
+            bp.bestellung_id AS bestellung_id,
+            bp.position_id AS position_id,
+            p.sku AS sku,
+            p.name AS name,
+            p.preis AS preis,
+            p.lagerbestand AS lagerbestand,
+            p.angelegt_von AS angelegt_von,
+            bp.menge AS menge,
+            bp.menge * p.preis AS gesamtpreis
+        FROM bestellung b
+        JOIN bestellposition bp ON bp.bestellung_id = b.bestellung_id
+        JOIN produkt p ON bp.sku = p.sku
+        """;
 }
 
