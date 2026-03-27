@@ -17,7 +17,7 @@ verbessert in Aspekten wie **Testing**, **Endpoints** und **Passwort-Speicherung
 ## Übersicht
 
 - [Funktionen](#funktionen)
-- [Tech Stack](#tech-stack)
+- [Tech-Stack](#tech-stack)
 - [Vorraussetzungen](#voraussetzungen)
 - [Datenbankverbindung](#datenbankverbindung)
 - [Installation](#installation)
@@ -29,7 +29,7 @@ verbessert in Aspekten wie **Testing**, **Endpoints** und **Passwort-Speicherung
 - CRUD für Kunden, Mitarbeiter, Adresse, Produkte, Bestellungen und Bestellpositionen
 - Login Feature (Passwortmanagement mit `BCrypt`)
 
-## Tech Stack
+## Tech-Stack
 
 - **Backend:** Spring Boot
 - **Datenbank:** PostgreSQL
