@@ -79,6 +79,19 @@ class LoginServiceTest {
     }
 
     @Test
+    void loginKunde_wrongEmail() {
+        KundeLoginDTO k = new KundeLoginDTO();
+        k.setEmail("wrongemail");
+        k.setPasswort("passwort");
+
+        when(kundenRepository.findByEmail("email"))
+            .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.loginKunde(k))
+                .isInstanceOf(UnauthorizedException.class);
+    }
+
+    @Test
     void loginMitarbeiter() {
         MitarbeiterLoginDTO m = new MitarbeiterLoginDTO();
         m.setPersonalNr(1);
@@ -111,6 +124,19 @@ class LoginServiceTest {
 
         when(encoder.matches("wrong", "hashed"))
                 .thenReturn(false);
+
+        assertThatThrownBy(() -> service.loginMitarbeiter(m))
+                .isInstanceOf(UnauthorizedException.class);
+    }
+
+    @Test
+    void loginMitarbeiter_wrongPersonalNr() {
+        MitarbeiterLoginDTO m = new MitarbeiterLoginDTO();
+        m.setPersonalNr(99);
+        m.setPasswort("passwort");
+
+        when(mitarbeiterRepository.findById(99))
+                .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.loginMitarbeiter(m))
                 .isInstanceOf(UnauthorizedException.class);

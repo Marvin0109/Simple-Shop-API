@@ -7,7 +7,7 @@ import simpleshopapi.repository.TestcontainerConfiguration;
 
 @SpringBootTest
 @Import(TestcontainerConfiguration.class)
-public class ApplicationTests {
+class ApplicationTests {
 
     @Test
     void contextLoads() {
