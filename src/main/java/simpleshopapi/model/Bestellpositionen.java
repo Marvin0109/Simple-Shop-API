@@ -12,7 +12,7 @@ public class Bestellpositionen {
     private int positionsId;
 
     @NotNull(message = "Bestellung ID muss gesetzt werden")
-    @NotBlank(message = "Bestellung ID darf nicht leer sein")
+    @Min(value = 1, message = "Bestellung ID muss größer als 0 sein")
     private int bestellungId;
 
     @NotNull(message = "SKU muss gesetzt werden")
@@ -21,7 +21,6 @@ public class Bestellpositionen {
     private String produktSku;
 
     @NotNull(message = "Menge muss gesetzt werden")
-    @NotBlank(message = "Menge darf nicht leer sein")
     @Min(value = 1, message = "Menge muss größer als 0 sein")
     private int menge;
 

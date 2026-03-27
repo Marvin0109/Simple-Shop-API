@@ -18,38 +18,13 @@ public class BestellpositionenRepository {
     }
 
     public List<Bestellpositionen> findAll() {
-        String sql =
-            """
-            SELECT
-                position_id,
-                menge,
-                bp.sku,
-                bestellung_id,
-                p.preis * menge AS gesamtpreis
-            FROM bestellposition bp
-            JOIN produkt p ON p.sku = bp.sku
-            ORDER BY position_id
-        """;
-
-        return jdbcTemplate.query(sql, BESTELLPOSITIONEN_ROW_MAPPER);
+        return jdbcTemplate.query(BASE_SELECT + " ORDER BY position_id", BESTELLPOSITIONEN_ROW_MAPPER);
     }
 
     public Optional<Bestellpositionen> findById(int id) {
-        String sql =
-            """
-            SELECT
-                position_id,
-                menge,
-                bp.sku,
-                bestellung_id,
-                p.preis * menge AS gesamtpreis
-            FROM bestellposition bp
-            JOIN produkt p ON p.sku = bp.sku
-            WHERE position_id = ?
-        """;
-
-        List<Bestellpositionen> result =  jdbcTemplate.query(sql, BESTELLPOSITIONEN_ROW_MAPPER, id);
-        return result.stream().findFirst();
+        return jdbcTemplate.query(BASE_SELECT + " WHERE position_id = ?", BESTELLPOSITIONEN_ROW_MAPPER, id)
+                .stream()
+                .findFirst();
     }
 
     public Bestellpositionen createBestellposition(int menge, String sku, int bestellungId) {
@@ -61,10 +36,9 @@ public class BestellpositionenRepository {
         return jdbcTemplate.queryForObject(sql, BESTELLPOSITIONEN_ROW_MAPPER, menge, sku, bestellungId, sku);
     }
 
-    public boolean deleteById(int id) {
+    public int deleteById(int id) {
         String sql = "DELETE FROM bestellposition WHERE position_id = ?";
-        int rowsAffected = jdbcTemplate.update(sql, id);
-        return rowsAffected > 0;
+        return jdbcTemplate.update(sql, id);
     }
 
     private static final RowMapper<Bestellpositionen> BESTELLPOSITIONEN_ROW_MAPPER =
@@ -77,4 +51,15 @@ public class BestellpositionenRepository {
             bp.setGesamtpreis(rs.getBigDecimal("gesamtpreis"));
             return bp;
         };
+
+    private static final String BASE_SELECT = """
+            SELECT
+                position_id,
+                menge,
+                bp.sku,
+                bestellung_id,
+                p.preis * menge AS gesamtpreis
+            FROM bestellposition bp
+            JOIN produkt p ON p.sku = bp.sku
+        """;
 }

@@ -12,6 +12,7 @@ import simpleshopapi.model.Bestellpositionen;
 import simpleshopapi.service.BestellpositionenService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,9 +48,9 @@ class BestellpositionenControllerTest {
         bp.setPositionsId(1);
         bp.setMenge(5);
 
-        when(service.findById(1)).thenReturn(bp);
+        when(service.findById(1)).thenReturn(Optional.of(bp));
 
-        mvc.perform(get("/bestellpositionen").param("id", "1"))
+        mvc.perform(get("/bestellpositionen/{id}", 1))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.positionsId").value(1))
@@ -60,7 +61,7 @@ class BestellpositionenControllerTest {
     void getBestellpositionen_notFound() throws Exception {
         when(service.findById(99)).thenThrow(new NotFoundException("Bestellpositionen with id " + 99 + " not found!"));
 
-        mvc.perform(get("/bestellpositionen").param("id", "99"))
+        mvc.perform(get("/bestellpositionen/{id}", 99))
             .andExpect(status().isNotFound());
     }
 
@@ -70,12 +71,17 @@ class BestellpositionenControllerTest {
         bp.setPositionsId(1);
         bp.setMenge(3);
 
-        when(service.create(1, "SKU-0000", 3)).thenReturn(bp);
+        when(service.create(1, "SKU-1000", 3)).thenReturn(bp);
 
         mvc.perform(post("/bestellpositionen")
-                .param("bestellungId", "1")
-                .param("sku", "SKU-0000")
-                .param("menge", "3"))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""
+                          {
+                              "bestellungId": 1,
+                              "produktSku": "SKU-1000",
+                              "menge": 3
+                          }
+                    """))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.positionsId").value(1))
             .andExpect(jsonPath("$.menge").value(3));
@@ -83,12 +89,14 @@ class BestellpositionenControllerTest {
 
     @Test
     void saveBestellpositionen_missingParam() throws Exception {
-        doThrow(new IllegalArgumentException("Menge ist null!"))
-                .when(service).create(1, "SKU-0000", null);
-
         mvc.perform(post("/bestellpositionen")
-                .param("bestellungId", "1")
-                .param("sku", "SKU-0000"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                          {
+                              "produktSku": "SKU-1000",
+                              "menge": 3
+                          }
+                    """))
             .andExpect(status().isBadRequest());
     }
 
@@ -96,7 +104,7 @@ class BestellpositionenControllerTest {
     void deleteBestellpositionen_success() throws Exception {
         doNothing().when(service).delete(1);
 
-        mvc.perform(delete("/bestellpositionen").param("id", "1"))
+        mvc.perform(delete("/bestellpositionen/{id}", 1))
             .andExpect(status().isNoContent());
     }
 
@@ -104,7 +112,7 @@ class BestellpositionenControllerTest {
     void deleteBestellpositionen_notFound() throws Exception {
         doThrow(new NotFoundException("Bestellpositionen with id " + 99 + " not found!")).when(service).delete(99);
 
-        mvc.perform(delete("/bestellpositionen").param("id", "99"))
+        mvc.perform(delete("/bestellpositionen/{id}", 99))
             .andExpect(status().isNotFound());
     }
 }
