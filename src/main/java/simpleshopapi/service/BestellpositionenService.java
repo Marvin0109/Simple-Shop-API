@@ -6,6 +6,7 @@ import simpleshopapi.model.Bestellpositionen;
 import simpleshopapi.repositories.BestellpositionenRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BestellpositionenService {
@@ -20,21 +21,16 @@ public class BestellpositionenService {
         return repository.findAll();
     }
 
-    public Bestellpositionen findById(Integer id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Bestellpositionen with id " + id + " not found!"));
+    public Optional<Bestellpositionen> findById(Integer id) {
+        return repository.findById(id);
     }
 
     public Bestellpositionen create(Integer bestellungId, String sku, Integer menge) {
-        if (bestellungId == null) throw new IllegalArgumentException("Bestellung ID ist null!");
-        if (sku == null) throw new IllegalArgumentException("SKU ist null!");
-        if (menge == null) throw new IllegalArgumentException("Menge ist null!");
-
         return repository.createBestellposition(menge, sku, bestellungId);
     }
 
     public void delete(Integer id) {
-        boolean deleted = repository.deleteById(id);
-        if (!deleted) throw new NotFoundException("Bestellpositionen with id " + id + " not found!");
+        int deleted = repository.deleteById(id);
+        if (deleted == 0) throw new NotFoundException("Bestellpositionen with id " + id + " not found!");
     }
 }
