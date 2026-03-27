@@ -3,6 +3,7 @@
 # Flags
 CLEAN=false
 PERSISTENT=false
+BUILD_JAR=false
 
 # Help
 function show_help() {
@@ -12,6 +13,7 @@ function show_help() {
   echo "  --help        Display options"
   echo "  --clean       Delete old container and volumes"
   echo "  --persistent  Start container with volume"
+  echo "  --build     Build/Rebuild JAR-File"
   exit 0
 }
 
@@ -26,6 +28,10 @@ for arg in "$@"; do
       ;;
     --persistent)
       PERSISTENT=true
+      shift
+      ;;
+    --build)
+      BUILD_JAR=true
       shift
       ;;
     *)
@@ -53,11 +59,18 @@ fi
 # Starting container
 docker compose -f "$COMPOSE_FILE" up -d
 
+# Build / Rebuild jar file
+
+if $BUILD_JAR; then
+  echo "Building jar file..."
+  mvn clean package
+fi
+
 # Check for existing jar file
 JAR_FILE=target/simpleshopapi-0.0.1-SNAPSHOT.jar
 if [ ! -f "$JAR_FILE" ]; then
-  echo "JAR-File not found! Build first with maven:"
-  echo "  mvn clean package"
+  echo "JAR-File not found! Run with option:"
+  echo " --build"
   exit 1
 fi
 
