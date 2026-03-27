@@ -89,7 +89,7 @@ class BestellungContainerTest {
         bestellung.setKundeId(kunde.getKundeId());
 
         // CREATE
-        Bestellung created = bestellungRepository.createBestellung(bestellung);
+        Bestellung created = bestellungRepository.save(bestellung);
         assertThat(created.getBestellungId()).isNotNegative();
 
         Bestellpositionen bp = bestellpositionenRepository.createBestellposition(2, produkt.getSku(), created.getBestellungId());
@@ -102,7 +102,7 @@ class BestellungContainerTest {
 
         // DELETE
         bestellpositionenRepository.deleteById(bp.getPositionsId());
-        assertTrue(bestellungRepository.deleteById(created.getBestellungId()));
+        assertThat(bestellungRepository.deleteById(created.getBestellungId())).isOne();
         assertFalse(bestellungRepository.findById(created.getBestellungId()).isPresent());
     }
 }

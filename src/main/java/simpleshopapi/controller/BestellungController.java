@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import simpleshopapi.service.BestellungService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,30 +21,39 @@ public class BestellungController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getBestellungen(@RequestParam(required = false) Integer id) {
-        if (id == null) {
-            return ResponseEntity.ok(service.findAll());
-        }
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<List<Bestellung>> getAllBestellungen() {
+        return ResponseEntity.ok(service.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Bestellung> getBestellungen(@PathVariable Integer id) {
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<?> createBestellungen(@Valid @RequestBody Bestellung bestellung,
-                                                         BindingResult bindingResult) {
+    public ResponseEntity<?> createBestellungen(
+            @Valid @RequestBody Bestellung bestellung,
+            BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            bindingResult.getFieldErrors()
-                    .forEach((error -> errors.add(error.getField() + ": " + error.getDefaultMessage())));
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            List<String> errors = bindingResult.getFieldErrors()
+                    .stream()
+                    .map(e -> e.getField() + ": " + e.getDefaultMessage())
+                    .toList();
+
+            return ResponseEntity.badRequest().body(errors);
         }
 
         Bestellung saved = service.create(bestellung);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(saved);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteBestellungen(@RequestParam Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBestellungen(@PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

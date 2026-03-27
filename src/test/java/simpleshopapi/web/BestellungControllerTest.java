@@ -12,6 +12,7 @@ import simpleshopapi.model.Bestellung;
 import simpleshopapi.service.BestellungService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -47,9 +48,9 @@ class BestellungControllerTest {
         b.setBestellungId(2);
         b.setStatus("neu");
 
-        when(service.findById(2)).thenReturn(b);
+        when(service.findById(2)).thenReturn(Optional.of(b));
 
-        mvc.perform(get("/bestellungen").param("id", "2"))
+        mvc.perform(get("/bestellungen/{id}", 2))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$.bestellungId").value(2))
@@ -60,7 +61,7 @@ class BestellungControllerTest {
     void getBestellungen_withId_notFound() throws Exception {
         when(service.findById(99)).thenThrow(new NotFoundException("Bestellung with id " + 99 + " not found!"));
 
-        mvc.perform(get("/bestellungen").param("id", "99"))
+        mvc.perform(get("/bestellungen/{id}", 99))
             .andExpect(status().isNotFound());
     }
 
@@ -108,8 +109,7 @@ class BestellungControllerTest {
     void deleteBestellungen_existing_returnsNoContent() throws Exception {
         doNothing().when(service).delete(1);
 
-        mvc.perform(delete("/bestellungen")
-                .param("id", "1"))
+        mvc.perform(delete("/bestellungen/{id}", 1))
             .andExpect(status().isNoContent());
     }
 
@@ -118,8 +118,7 @@ class BestellungControllerTest {
         doThrow(new NotFoundException("Bestellung with id " + 99 + " not found!"))
                 .when(service).delete(99);
 
-        mvc.perform(delete("/bestellungen")
-                .param("id", "99"))
+        mvc.perform(delete("/bestellungen/{id}", 99))
             .andExpect(status().isNotFound());
     }
 

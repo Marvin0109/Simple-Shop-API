@@ -35,12 +35,14 @@ CREATE TABLE IF NOT EXISTS mitarbeiter (
     passwort        VARCHAR(255) NOT NULL
 );
 
+CREATE TYPE bestellung_status AS ENUM (
+    'neu', 'bezahlt', 'versendet', 'abgeschlossen', 'storniert'
+);
+
 CREATE TABLE IF NOT EXISTS bestellung (
     bestellung_id           INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     datum                   TIMESTAMP NOT NULL,
-    status                  VARCHAR(13) NOT NULL CHECK(status IN (
-                                'neu', 'bezahlt', 'versendet', 'abgeschlossen', 'storniert'
-                            )),
+    status                  bestellung_status NOT NULL,
     mitarbeiterzuweis       INT NOT NULL,
     kunde_id                INT NOT NULL,
     FOREIGN KEY (mitarbeiterzuweis) REFERENCES mitarbeiter(personal_nr),
@@ -313,17 +315,9 @@ SELECT
     COALESCE(b.anzahl_bestellungen, 0) AS anzahl_bestellungen
 FROM mitarbeiter m
     CROSS JOIN (
-        SELECT 'neu' AS status
-        UNION ALL
-        SELECT 'bezahlt'
-        UNION ALL
-        SELECT 'versendet'
-        UNION ALL
-        SELECT 'storniert'
-        UNION ALL
-        SELECT 'abgeschlossen'
+        SELECT unnest(enum_range(NULL::bestellung_status)) AS status
     ) s
-LEFT JOIN (
+    LEFT JOIN (
     SELECT
         mitarbeiterzuweis,
         status,
