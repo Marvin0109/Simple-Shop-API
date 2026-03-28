@@ -18,11 +18,13 @@ CREATE TABLE IF NOT EXISTS kunde (
     passwort        VARCHAR(255) NOT NULL
 );
 
+CREATE TYPE adress_typ AS ENUM ('Lieferadresse', 'Rechnungsadresse');
+
 CREATE TABLE IF NOT EXISTS kunde_hat_adressen (
     adresse_id      INT NOT NULL,
     kunde_id        INT NOT NULL,
-    typ             TEXT NOT NULL CHECK(typ IN ('Lieferadresse', 'Rechnungsadresse')),
-    PRIMARY KEY (adresse_id, kunde_id),
+    typ             adress_typ NOT NULL,
+    PRIMARY KEY (adresse_id, kunde_id, typ),
     FOREIGN KEY (adresse_id) REFERENCES adresse(adresse_id) ON DELETE CASCADE,
     FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id) ON DELETE CASCADE
 );
