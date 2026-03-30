@@ -101,6 +101,10 @@ class BestellungContainerTest {
         assertEquals(1, fetched.get().getPositionen().size());
         assertEquals(produkt.getSku(), fetched.get().getPositionen().get(0).getProdukt().getSku());
 
+        // UPDATE
+        int updated = bestellungRepository.update(1, "bezahlt");
+        assertEquals(1, updated);
+
         // DELETE
         bestellpositionenRepository.deleteById(bp.getPositionsId());
         assertThat(bestellungRepository.deleteById(created.getBestellungId())).isOne();

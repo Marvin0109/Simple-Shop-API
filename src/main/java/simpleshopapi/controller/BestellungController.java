@@ -52,6 +52,15 @@ public class BestellungController {
                 .body(saved);
     }
 
+    @PatchMapping("/{id}/{status}")
+    public ResponseEntity<?> updateBestellungen(
+            @PathVariable Integer id,
+            @PathVariable String status) {
+
+        service.updateStatus(id, status);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBestellungen(@PathVariable Integer id) {
         service.delete(id);

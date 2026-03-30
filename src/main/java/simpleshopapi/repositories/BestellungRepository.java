@@ -102,6 +102,11 @@ public class BestellungRepository {
         return jdbcTemplate.update(sql, bestellungId);
     }
 
+    public int update(int id, String status) {
+        String sql = "UPDATE bestellung SET status = ? WHERE bestellung_id = ?";
+        return jdbcTemplate.update(sql, status, id);
+    }
+
     private void produkteForBestellungen(ResultSet rs, Bestellung bestellung) throws SQLException {
         Produkt produkt = new Produkt();
         produkt.setSku(rs.getString("sku"));

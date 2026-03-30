@@ -25,6 +25,14 @@ public class BestellungService {
         return repository.findById(id);
     }
 
+    public void updateStatus(Integer id, String status) {
+        int updated = repository.update(id, status);
+
+        if (updated == 0) {
+            throw new NotFoundException("Bestellung with id " + id + " not found");
+        }
+    }
+
     public Bestellung create(Bestellung bestellung) {
         return repository.save(bestellung);
     }

@@ -122,4 +122,9 @@ class BestellungControllerTest {
             .andExpect(status().isNotFound());
     }
 
+    @Test
+    void updateStatus() throws Exception {
+        mvc.perform(patch("/bestellungen/{id}/{status}", 1, "bezahlt"))
+            .andExpect(status().isNoContent());
+    }
 }
