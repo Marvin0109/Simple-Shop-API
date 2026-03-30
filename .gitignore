@@ -4,3 +4,4 @@
 *.iml
 .env
 src/main/resources/application-local.properties
+src/main/resources/docs/DBSW_WISE2526_Abschlussprojekt_Aufgaben.pdf

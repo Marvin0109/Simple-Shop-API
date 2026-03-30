@@ -12,7 +12,7 @@ Seit der Abgabe wurde die Anwendung
 verbessert in Aspekten wie **Testing**, **Endpoints** und **Passwort-Speicherung**.
 
 > [!NOTE]
-> Die Anwendung unterläuft grad einiger Verbesserungen und Fixes, mehr Details dazu in [To-do](TODO.md).
+> Alle zu bearbeitende Aufgaben in [To-do](TODO.md) sind erledigt und die Weiterentwicklung ist hiermit beendet. 
 
 ## Übersicht
 
@@ -112,9 +112,14 @@ Für invalide Logins sowie weitere Demos siehe [hier](src/main/resources/demo).
 
 ## Literatur
 
-Da dieses Projekt ein Abschlussprojekt war, gab es vom Dozenten ein Dokument mit Installationsanweisungen,
-Anforderungen, Endpoints, Datenbankaufbau usw.
-Dieses Dokument ist [hier](src/main/resources/docs/DBSW_WISE2526_Abschlussprojekt_Aufgaben.pdf) verlinkt.
+> [!NOTE]
+> Manche Anforderungen im Dokument sind vereinfacht worden, d.h. 
+> dass die aktuelle Version der Anwendung ein Upgrade darstellt.
+
+Dieses Projekt entstand im Rahmen eines Abschlussprojekts.
+Der Dozent stellte ein Dokument bereit, das Installationsanweisungen, 
+Anforderungen, API-Endpunkte und den Datenbankaufbau beschreibt.  
+(Das Dokument ist urheberrechtlich geschützt und daher nicht öffentlich verfügbar.)
 
 [Zurück zur Übersicht](#übersicht)
 
