@@ -92,7 +92,8 @@ class BestellungContainerTest {
         Bestellung created = bestellungRepository.save(bestellung);
         assertThat(created.getBestellungId()).isNotNegative();
 
-        Bestellpositionen bp = bestellpositionenRepository.createBestellposition(2, produkt.getSku(), created.getBestellungId());
+        Bestellpositionen bp = bestellpositionenRepository
+                .createBestellposition(2, produkt.getSku(), created.getBestellungId());
 
         // FIND
         Optional<Bestellung> fetched = bestellungRepository.findById(created.getBestellungId());

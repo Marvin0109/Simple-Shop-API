@@ -18,15 +18,14 @@ CREATE TABLE IF NOT EXISTS kunde (
     passwort        VARCHAR(255) NOT NULL
 );
 
-CREATE TYPE adress_typ AS ENUM ('Lieferadresse', 'Rechnungsadresse');
-
 CREATE TABLE IF NOT EXISTS kunde_hat_adressen (
     adresse_id      INT NOT NULL,
     kunde_id        INT NOT NULL,
-    typ             adress_typ NOT NULL,
+    typ             VARCHAR(50) NOT NULL,
     PRIMARY KEY (adresse_id, kunde_id, typ),
     FOREIGN KEY (adresse_id) REFERENCES adresse(adresse_id) ON DELETE CASCADE,
-    FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id) ON DELETE CASCADE
+    FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id) ON DELETE CASCADE,
+    CHECK (typ IN ('Lieferadresse', 'Rechnungsadresse'))
 );
 
 CREATE TABLE IF NOT EXISTS mitarbeiter (
@@ -37,18 +36,15 @@ CREATE TABLE IF NOT EXISTS mitarbeiter (
     passwort        VARCHAR(255) NOT NULL
 );
 
-CREATE TYPE bestellung_status AS ENUM (
-    'neu', 'bezahlt', 'versendet', 'abgeschlossen', 'storniert'
-);
-
 CREATE TABLE IF NOT EXISTS bestellung (
     bestellung_id           INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     datum                   TIMESTAMP NOT NULL,
-    status                  bestellung_status NOT NULL,
+    status                  VARCHAR(50) NOT NULL,
     mitarbeiterzuweis       INT NOT NULL,
     kunde_id                INT NOT NULL,
     FOREIGN KEY (mitarbeiterzuweis) REFERENCES mitarbeiter(personal_nr),
-    FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id)
+    FOREIGN KEY (kunde_id) REFERENCES kunde(kunde_id),
+    CHECK (status IN ('neu', 'bezahlt', 'versendet', 'abgeschlossen', 'storniert'))
 );
 
 CREATE TABLE IF NOT EXISTS produkt (
@@ -317,7 +313,15 @@ SELECT
     COALESCE(b.anzahl_bestellungen, 0) AS anzahl_bestellungen
 FROM mitarbeiter m
     CROSS JOIN (
-        SELECT unnest(enum_range(NULL::bestellung_status)) AS status
+        SELECT 'neu' AS status
+        UNION ALL
+        SELECT 'bezahlt'
+        UNION ALL
+        SELECT 'versendet'
+        UNION ALL
+        SELECT 'storniert'
+        UNION ALL
+        SELECT 'abgeschlossen'
     ) s
     LEFT JOIN (
     SELECT

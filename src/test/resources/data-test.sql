@@ -10,3 +10,6 @@ VALUES ('kunde@test.de', 'John', 'Doe', 'a#789!');
 INSERT INTO bestellung (datum, status, mitarbeiterzuweis, kunde_id)
 VALUES (NOW(), 'neu', 1, 1);
 
+INSERT INTO adresse (aktiv, strasse, hausnummer, plz, ort, land)
+VALUES (true, 'Linienstrasse', 10, 32455, 'Berlin', 'Deutschland');
+

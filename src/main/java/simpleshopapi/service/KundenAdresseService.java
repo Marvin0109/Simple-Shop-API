@@ -14,8 +14,8 @@ public class KundenAdresseService {
         this.repository = repository;
     }
 
-    public void create(KundenAdresse kundenAdresse) {
-        repository.save(kundenAdresse);
+    public KundenAdresse create(KundenAdresse kundenAdresse) {
+        return repository.save(kundenAdresse);
     }
 
     public void updateType(String typ, KundenAdresse kundenAdresse) {
@@ -26,8 +26,16 @@ public class KundenAdresseService {
         if (!typ.equals(kundenAdresse.getTyp())) {
             int updated = repository.update(typ, kundenAdresse);
             if (updated == 0) {
-                throw new NotFoundException("Not able to update type");
+                throw new NotFoundException("Not able to update typ");
             }
+        }
+    }
+
+    public void delete(KundenAdresse kundenAdresse) {
+        int deleted = repository.delete(kundenAdresse);
+
+        if (deleted == 0) {
+            throw new NotFoundException("KundenAdresse not found!");
         }
     }
 }

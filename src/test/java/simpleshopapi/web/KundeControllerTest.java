@@ -145,10 +145,6 @@ class KundeControllerTest {
 
     @Test
     void updateKunde_success() throws Exception {
-        Kunde k = new Kunde();
-        k.setKundeId(1);
-        k.setVorname("Peter");
-
         mvc.perform(put("/kunden/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""

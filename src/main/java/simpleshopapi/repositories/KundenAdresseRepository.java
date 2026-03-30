@@ -13,7 +13,7 @@ public class KundenAdresseRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(KundenAdresse kundenAdresse) {
+    public KundenAdresse save(KundenAdresse kundenAdresse) {
         String sql = "INSERT INTO kunde_hat_adressen (adresse_id, kunde_id, typ) " +
                 "VALUES (?, ?, ?) ON CONFLICT DO NOTHING";
         jdbcTemplate.update(
@@ -22,6 +22,8 @@ public class KundenAdresseRepository {
                 kundenAdresse.getKundenId(),
                 kundenAdresse.getTyp()
         );
+
+        return kundenAdresse;
     }
 
     public int update(String type, KundenAdresse kundenAdresse) {
@@ -37,5 +39,16 @@ public class KundenAdresseRepository {
                 kundenAdresse.getTyp());
     }
 
+    public int delete(KundenAdresse kundenAdresse) {
+        String sql = """
+            DELETE FROM kunde_hat_adressen
+            WHERE adresse_id = ? AND kunde_id = ? AND typ = ?
+        """;
 
+        return jdbcTemplate.update(
+                sql,
+                kundenAdresse.getAdresseId(),
+                kundenAdresse.getKundenId(),
+                kundenAdresse.getTyp());
+    }
 }
