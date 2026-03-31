@@ -13,7 +13,7 @@ function show_help() {
   echo "  --help        Display options"
   echo "  --clean       Delete old container and volumes"
   echo "  --persistent  Start container with volume"
-  echo "  --build     Build/Rebuild JAR-File"
+  echo "  --build       Build/Rebuild JAR-File"
   exit 0
 }
 
