@@ -1,7 +1,7 @@
 # SIMPLE-SHOP-API
 
 > **Autor**: Marvin0109,
-> **aktualisiert am**: 26.03.2026,
+> **aktualisiert am**: 31.03.2026,
 > **Version**: 1.5
 
 SIMPLE-SHOP-API ist eine simple REST-API Anwendung, die im Modul *Datenbanken: Weiterführende Konzepte*
@@ -94,7 +94,7 @@ $ ./clean.sh --help # Anzeige von Optionen
 ## Nutzung
 
 > [!NOTE]
-> Folgende Screenshots zeigen das Testen der Endpoints mit **Swagger-UI** der Anwendung vom Stand **26.03.26**.
+> Folgende Screenshots zeigen das Testen der Endpoints mit **Swagger-UI** der Anwendung vom Stand **31.03.26**.
 
 ### Kunden anlegen
 
@@ -108,17 +108,17 @@ $ ./clean.sh --help # Anzeige von Optionen
 
 ![Kundenlogin erfolgreich](src/main/resources/demo/loginKundeSuccess.png)
 
-Für invalide Logins sowie weitere Demos siehe [hier](src/main/resources/demo).
+Für invalide Logins sowie weitere Demos wie Bestellung, Produkte usw. siehe [hier](src/main/resources/demo).
 
 ## Literatur
 
 > [!NOTE]
-> Manche Anforderungen im Dokument sind vereinfacht worden, d.h. 
+> Manche Anforderungen vom Prüfer sind vereinfacht worden, d.h. 
 > dass die aktuelle Version der Anwendung ein Upgrade darstellt.
 
 Dieses Projekt entstand im Rahmen eines Abschlussprojekts.
-Der Dozent stellte ein Dokument bereit, das Installationsanweisungen, 
-Anforderungen, API-Endpunkte und den Datenbankaufbau beschreibt.  
+Der Dozent stellte ein Dokument bereit, welches Installationsanweisungen, 
+Anforderungen, API-Endpunkte und Datenbankaufbau beinhaltet.  
 (Das Dokument ist urheberrechtlich geschützt und daher nicht öffentlich verfügbar.)
 
 [Zurück zur Übersicht](#übersicht)
