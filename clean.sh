@@ -48,7 +48,7 @@ fi
 
 if $REMOVE_JAR; then
   echo "Removing built files..."
-  mvn clean
+  ./mvnw clean
 fi
 
 echo "Cleanup finished."

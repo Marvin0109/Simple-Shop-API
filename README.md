@@ -41,7 +41,7 @@ verbessert in Aspekten wie **Testing**, **Endpoints** und **Passwort-Speicherung
 - Docker + Docker Compose
 - PostgreSQL Client
 - Java 17
-- Maven
+- Maven (Optional)
 - Unix System / Windows (nicht getestet)
 
 ## Datenbankverbindung
@@ -66,6 +66,7 @@ $ git clone git@github.com:Marvin0109/Simple-Shop-API.git
 ```
 $ chmod +x start.sh
 $ chmod +x clean.sh
+$ chmod +x mvnw
 ```
 
 #### 3. Anwendung starten

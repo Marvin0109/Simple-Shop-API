@@ -41,29 +41,10 @@ for arg in "$@"; do
     esac
   done
 
-# Choose compose file
-if $PERSISTENT; then
-  COMPOSE_FILE="docker-compose-persistent.yml"
-  echo "Starting persistent container..."
-else
-  COMPOSE_FILE="docker-compose.yml"
-  echo "Starting non-persistent container..."
-fi
-
-# Deleting old container and volumes
-if $CLEAN; then
-  echo "Old container and volumes being deleted..."
-  docker compose -f "$COMPOSE_FILE" down -v
-fi
-
-# Starting container
-docker compose -f "$COMPOSE_FILE" up -d
-
 # Build / Rebuild jar file
-
 if $BUILD_JAR; then
   echo "Building jar file..."
-  mvn clean package
+  ./mvnw clean package
 fi
 
 # Check for existing jar file
@@ -73,6 +54,24 @@ if [ ! -f "$JAR_FILE" ]; then
   echo " --build"
   exit 1
 fi
+
+# Deleting old container and volumes
+if $CLEAN; then
+  echo "Old container and volumes being deleted..."
+  docker compose -f "$COMPOSE_FILE" down -v
+fi
+
+# Choose compose file
+if $PERSISTENT; then
+  COMPOSE_FILE="docker-compose-persistent.yml"
+  echo "Starting persistent container..."
+else
+  COMPOSE_FILE="docker-compose.yml"
+  echo "Starting non-persistent container..."
+fi
+
+# Starting container
+docker compose -f "$COMPOSE_FILE" up -d
 
 # Starting application
 echo "Starting Spring Boot App..."
